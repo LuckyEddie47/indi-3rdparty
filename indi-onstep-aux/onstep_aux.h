@@ -169,22 +169,8 @@ class onstepAux : public INDI::DefaultDevice
     private:
         int  timerIndex;
         int  myDCP4Firmware = 0;
-        bool ch3ManualPower = false;
-        float channelActive[4] = {1};
         int  msleep( long duration);
-        bool sendCommand(const char *cmd, char *response);
         bool Handshake();
-        bool Ack();
-        bool rebootController();
-        bool readSettings();
-        bool setChannelOffset(unsigned int channel, float value);
-        bool setAmbientOffset(float value);
-        bool setTrackingMode(unsigned int value);
-        bool setTrackingOffset(int value);
-        bool setCh3Mode(unsigned int value);
-        bool setCh3Output(unsigned int value);
-        bool setChannelBoost(unsigned int channel, unsigned int value);
-        bool getActiveChannels();
 
         int conversion_error = -10000;
 
