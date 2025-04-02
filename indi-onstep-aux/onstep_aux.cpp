@@ -27,6 +27,13 @@
 
 */
 
+// Debug only
+
+ #include <signal.h>
+ #include <unistd.h>
+
+// Debug only end
+
 #include "onstep_aux.h"
 #include "connectionplugins/connectiontcp.h"
 #include "connectionplugins/connectionserial.h"
@@ -39,7 +46,8 @@
 #include <unistd.h>
 #include <mutex>
 
-#define USBDEWPOINT_TIMEOUT 3
+// Custom tabs
+#define MANUAL_TAB "Manual"
 
 // Define auto pointer to ourselves
 std::unique_ptr<onstepAux> onstepaux(new onstepAux());
@@ -49,6 +57,12 @@ std::mutex osaCommsLock;
 
 onstepAux::onstepAux()
 {
+    // Debug only
+    // Halts the process at this point. Allows remote debugger to attach which is required
+    // when launching the driver from a client eg. Ekos
+     kill(getpid(), SIGSTOP);
+    // Debug only end
+
     setVersion(0, 1);
 }
 
@@ -85,6 +99,18 @@ bool onstepAux::initProperties()
         registerConnection(tcpConnection);
     }
 
+    // Manual tab controls
+    //--------------------
+
+    // Debug only
+    IUFillTextVector(&Arbitary_CommandTP, Arbitary_CommandT, 1, getDeviceName(), "ARBITARY_COMMAND", "Command",
+                     MANUAL_TAB, IP_RW, 60, IPS_IDLE);
+    IUFillText(&Arbitary_CommandT[0], "ARBITARY_COMMANDT", "Response:", ":IP#");
+    // Debug only end
+
+    // Standard Indi aux controls
+    //---------------------------
+    addAuxControls();
 
     return true;
 }
@@ -96,7 +122,16 @@ bool onstepAux::updateProperties()
     if (isConnected()) {
         loadConfig(true);
         timerIndex = SetTimer(getCurrentPollingPeriod());
+
+        // Debug only
+        defineProperty(&Arbitary_CommandTP);
+        // Debug only end
     } else {
+
+        // Debug only
+        deleteProperty(Arbitary_CommandTP.name);
+        // Debug only end
+
         return false;
     }
 
@@ -106,30 +141,6 @@ bool onstepAux::updateProperties()
 const char *onstepAux::getDefaultName()
 {
     return (const char *)"Onstep Aux";
-}
-
-// sleep for a number of milliseconds
-int onstepAux::msleep( long duration)
-{
-    struct timespec ts;
-    int res;
-
-    if (duration < 0)
-    {
-        errno = EINVAL;
-        return -1;
-    }
-
-    ts.tv_sec = duration / 1000;
-    ts.tv_nsec = (duration % 1000) * 1000000;
-
-    do
-    {
-        res = nanosleep(&ts, &ts);
-    }
-    while (res && errno == EINTR);
-
-    return res;
 }
 
 
@@ -232,6 +243,45 @@ bool onstepAux::ISNewNumber(const char *dev, const char *name, double values[], 
     return INDI::DefaultDevice::ISNewNumber(dev, name, values, names, n);
 }
 
+
+/*****************************************
+ * Client has changed a text field, update
+ *****************************************/
+bool onstepAux::ISNewText(const char *dev,const char *name,char *texts[],char *names[],int n)
+{
+    // Debug only - Manual tab, Arbitary command
+    if (dev != nullptr && strcmp(dev, getDeviceName()) == 0) {
+        if (!strcmp(Arbitary_CommandTP.name, name)) {
+            if (1 == n) {
+                char command_response[RB_MAX_LEN] = {0};
+                int command_error_or_fail  = getCommandSingleCharErrorOrLongResponse(PortFD, command_response, texts[0]);
+                if (command_error_or_fail > 0) {
+                    if (strcmp(command_response, "") == 0) {
+                        indi_strlcpy(command_response, "No response", sizeof(command_response));
+                    }
+                } else {
+                    char error_code[RB_MAX_LEN] = {0};
+                    if (command_error_or_fail == TTY_TIME_OUT) {
+                        indi_strlcpy(command_response, "No response", sizeof(command_response));
+                    } else {
+                        sprintf(error_code, "Error: %d", command_error_or_fail);
+                        indi_strlcpy(command_response, error_code, sizeof(command_response));
+                    }
+                }
+                        // Replace the user entered string with the OCS response
+                indi_strlcpy(texts[0], command_response, RB_MAX_LEN);
+                IUUpdateText(&Arbitary_CommandTP, texts, names, n);
+                IDSetText(&Arbitary_CommandTP, nullptr);
+                return true;
+            }
+        }
+        return false;
+    // Debug only end
+
+    } else {
+        return false;
+    }
+}
 
 void onstepAux::TimerHit()
 {
