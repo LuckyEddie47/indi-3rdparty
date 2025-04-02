@@ -35,13 +35,17 @@
 #include <cstring>
 //#include <string>
 #include <memory>
-
 #include <termios.h>
 #include <unistd.h>
+#include <mutex>
 
 #define USBDEWPOINT_TIMEOUT 3
 
+// Define auto pointer to ourselves
 std::unique_ptr<onstepAux> onstepaux(new onstepAux());
+
+// Mutex for communications
+std::mutex osaCommsLock;
 
 onstepAux::onstepAux()
 {
@@ -996,3 +1000,341 @@ void onstepAux::TimerHit()
     readSettings();
     timerIndex = SetTimer(getCurrentPollingPeriod());
 }
+
+/*********************************************************************
+ * Send command to OCS without checking (intended non-existent) return
+ * *******************************************************************/
+bool onstepAux::sendOsaCommandBlind(const char *cmd)
+{
+    // No need to block this command as there is no response
+
+    int error_type;
+    int nbytes_write = 0;
+    DEBUGF(INDI::Logger::DBG_DEBUG, "CMD <%s>", cmd);
+    flushIO(PortFD);
+    /* Add mutex */
+    std::unique_lock<std::mutex> guard(osaCommsLock);
+    tcflush(PortFD, TCIFLUSH);
+    if ((error_type = tty_write_string(PortFD, cmd, &nbytes_write)) != TTY_OK) {
+        LOGF_ERROR("CHECK CONNECTION: Error sending command %s", cmd);
+        waitingForResponse = false;
+        return 0; //Fail if we can't write
+        //return error_type;
+    }
+    return 1;
+}
+
+/*********************************************************************
+ * Send command to OCS that expects a 0 (sucess) or 1 (failure) return
+ * *******************************************************************/
+bool onstepAux::sendOsaCommand(const char *cmd)
+{
+    blockUntilClear();
+
+    char response[1] = {0};
+    int error_type;
+    int nbytes_write = 0, nbytes_read = 0;
+
+    DEBUGF(INDI::Logger::DBG_DEBUG, "CMD <%s>", cmd);
+
+    flushIO(PortFD);
+    /* Add mutex */
+    std::unique_lock<std::mutex> guard(osaCommsLock);
+    tcflush(PortFD, TCIFLUSH);
+
+    if ((error_type = tty_write_string(PortFD, cmd, &nbytes_write)) != TTY_OK)
+        return error_type;
+
+    error_type = tty_read_expanded(PortFD, response, 1, OsaTimeoutSeconds, OsaTimeoutMicroSeconds, &nbytes_read);
+
+    tcflush(PortFD, TCIFLUSH);
+    DEBUGF(INDI::Logger::DBG_DEBUG, "RES <%c>", response[0]);
+    //waitingForResponse = false;
+    clearBlock();
+
+    if (nbytes_read < 1) {
+        LOG_WARN("Timeout/Error on response. Check connection.");
+        return false;
+    }
+
+    return (response[0] == '0'); //OCS uses 0 for success and non zero for failure, in *most* cases;
+}
+
+/************************************************************
+ * Send command to OCS that expects a single character return
+ * **********************************************************/
+int onstepAux::getCommandSingleCharResponse(int fd, char *data, const char *cmd)
+{
+    blockUntilClear();
+
+    char *term;
+    int error_type;
+    int nbytes_write = 0, nbytes_read = 0;
+
+    DEBUGF(INDI::Logger::DBG_DEBUG, "CMD <%s>", cmd);
+
+    flushIO(fd);
+    /* Add mutex */
+    std::unique_lock<std::mutex> guard(osaCommsLock);
+
+    if ((error_type = tty_write_string(fd, cmd, &nbytes_write)) != TTY_OK)
+        return error_type;
+
+    error_type = tty_read_expanded(fd, data, 1, OsaTimeoutSeconds, OsaTimeoutMicroSeconds, &nbytes_read);
+    tcflush(fd, TCIFLUSH);
+
+    if (error_type != TTY_OK)
+        return error_type;
+
+    term = strchr(data, '#');
+    if (term)
+        *term = '\0';
+    if (nbytes_read < RB_MAX_LEN) { //given this function that should always be true, as should nbytes_read always be 1
+        data[nbytes_read] = '\0';
+    } else {
+        LOG_DEBUG("got RB_MAX_LEN bytes back (which should never happen), last byte set to null and possible overflow");
+        data[RB_MAX_LEN - 1] = '\0';
+    }
+
+    DEBUGF(INDI::Logger::DBG_DEBUG, "RES <%s>", data);
+    //waitingForResponse = false;
+    clearBlock();
+
+    return nbytes_read;
+}
+
+/**************************************************
+ * Send command to OCS that expects a double return
+ * ************************************************/
+int onstepAux::getCommandDoubleResponse(int fd, double *value, char *data, const char *cmd)
+{
+    blockUntilClear();
+
+    char *term;
+    int error_type;
+    int nbytes_write = 0, nbytes_read = 0;
+
+    DEBUGF(INDI::Logger::DBG_DEBUG, "CMD <%s>", cmd);
+
+    flushIO(fd);
+    /* Add mutex */
+    std::unique_lock<std::mutex> guard(osaCommsLock);
+    tcflush(fd, TCIFLUSH);
+
+    if ((error_type = tty_write_string(fd, cmd, &nbytes_write)) != TTY_OK)
+        return error_type;
+
+    error_type = tty_read_section_expanded(fd, data, '#', OsaTimeoutSeconds, OsaTimeoutMicroSeconds, &nbytes_read);
+    tcflush(fd, TCIFLUSH);
+
+    term = strchr(data, '#');
+    if (term)
+        *term = '\0';
+    if (nbytes_read < RB_MAX_LEN) { //If within buffer, terminate string with \0 (in case it didn't find the #)
+        data[nbytes_read] = '\0'; //Indexed at 0, so this is the byte passed it
+    } else {
+        LOG_DEBUG("got RB_MAX_LEN bytes back, last byte set to null and possible overflow");
+        data[RB_MAX_LEN - 1] = '\0';
+    }
+
+    DEBUGF(INDI::Logger::DBG_DEBUG, "RES <%s>", data);
+    //waitingForResponse = false;
+    clearBlock();
+
+    if (error_type != TTY_OK) {
+        LOGF_DEBUG("Error %d", error_type);
+        LOG_DEBUG("Flushing connection");
+        tcflush(fd, TCIOFLUSH);
+        return error_type;
+    }
+
+    if (sscanf(data, "%lf", value) != 1) {
+        LOG_WARN("Invalid response, check connection");
+        LOG_DEBUG("Flushing connection");
+        tcflush(fd, TCIOFLUSH);
+        return RES_ERR_FORMAT; //-1001, so as not to conflict with TTY_RESPONSE;
+    }
+
+    return nbytes_read;
+}
+
+/************************************************
+ * Send command to OCS that expects an int return
+ * **********************************************/
+int onstepAux::getCommandIntResponse(int fd, int *value, char *data, const char *cmd)
+{
+    blockUntilClear();
+
+    char *term;
+    int error_type;
+    int nbytes_write = 0, nbytes_read = 0;
+
+    DEBUGF(INDI::Logger::DBG_DEBUG, "CMD <%s>", cmd);
+
+    flushIO(fd);
+    /* Add mutex */
+    std::unique_lock<std::mutex> guard(osaCommsLock);
+    tcflush(fd, TCIFLUSH);
+
+    if ((error_type = tty_write_string(fd, cmd, &nbytes_write)) != TTY_OK)
+        return error_type;
+
+    error_type = tty_read_expanded(fd, data, sizeof(char), OsaTimeoutSeconds, OsaTimeoutMicroSeconds, &nbytes_read);
+    tcflush(fd, TCIFLUSH);
+
+    term = strchr(data, '#');
+    if (term)
+        *term = '\0';
+    if (nbytes_read < RB_MAX_LEN) { //If within buffer, terminate string with \0 (in case it didn't find the #)
+        data[nbytes_read] = '\0'; //Indexed at 0, so this is the byte passed it
+    } else {
+        LOG_DEBUG("got RB_MAX_LEN bytes back, last byte set to null and possible overflow");
+        data[RB_MAX_LEN - 1] = '\0';
+    }
+
+    DEBUGF(INDI::Logger::DBG_DEBUG, "RES <%s>", data);
+    //waitingForResponse = false;
+    clearBlock();
+
+    if (error_type != TTY_OK) {
+        LOGF_DEBUG("Error %d", error_type);
+        LOG_DEBUG("Flushing connection");
+        tcflush(fd, TCIOFLUSH);
+        return error_type;
+    }
+    if (sscanf(data, "%i", value) != 1) {
+        LOG_WARN("Invalid response, check connection");
+        LOG_DEBUG("Flushing connection");
+        tcflush(fd, TCIOFLUSH);
+        return RES_ERR_FORMAT; //-1001, so as not to conflict with TTY_RESPONSE;
+    }
+
+    return nbytes_read;
+}
+
+/***************************************************************************
+ * Send command to OCS that expects a char[] return (could be a single char)
+ * *************************************************************************/
+int onstepAux::getCommandSingleCharErrorOrLongResponse(int fd, char *data, const char *cmd)
+{
+    blockUntilClear();
+
+    char *term;
+    int error_type;
+    int nbytes_write = 0, nbytes_read = 0;
+
+    DEBUGF(INDI::Logger::DBG_DEBUG, "CMD <%s>", cmd);
+
+    flushIO(fd);
+    /* Add mutex */
+    std::unique_lock<std::mutex> guard(osaCommsLock);
+    tcflush(fd, TCIFLUSH);
+
+    if ((error_type = tty_write_string(fd, cmd, &nbytes_write)) != TTY_OK)
+        return error_type;
+
+    error_type = tty_read_section_expanded(fd, data, '#', OsaTimeoutSeconds, OsaTimeoutMicroSeconds, &nbytes_read);
+    tcflush(fd, TCIFLUSH);
+
+    term = strchr(data, '#');
+    if (term)
+        *term = '\0';
+    if (nbytes_read < RB_MAX_LEN) { //If within buffer, terminate string with \0 (in case it didn't find the #)
+        data[nbytes_read] = '\0'; //Indexed at 0, so this is the byte passed it
+    } else {
+        LOG_DEBUG("got RB_MAX_LEN bytes back, last byte set to null and possible overflow");
+        data[RB_MAX_LEN - 1] = '\0';
+    }
+
+    DEBUGF(INDI::Logger::DBG_DEBUG, "RES <%s>", data);
+    //waitingForResponse = false;
+    clearBlock();
+
+    if (error_type != TTY_OK) {
+        LOGF_DEBUG("Error %d", error_type);
+        return error_type;
+    }
+
+    return nbytes_read;
+}
+
+/********************************************************
+ * Converts an OCS char[] return of a numeric into an int
+ * ******************************************************/
+int onstepAux::getCommandIntFromCharResponse(int fd, char *data, int *response, const char *cmd)
+{
+    int errorOrFail = getCommandSingleCharErrorOrLongResponse(fd, data, cmd);
+    if (errorOrFail < 1) {
+        waitingForResponse = false;
+        return errorOrFail;
+    } else {
+        int value = conversion_error;
+        try {
+            value = std::stoi(data);
+        } catch (const std::invalid_argument&) {
+            LOGF_WARN("Invalid response to %s: %s", cmd, data);
+        } catch (const std::out_of_range&) {
+            LOGF_WARN("Invalid response to %s: %s", cmd, data);
+        }
+        *response = value;
+        return errorOrFail;
+    }
+}
+
+
+/**********************
+ * Flush the comms port
+ * ********************/
+int onstepAux::flushIO(int fd)
+{
+    tcflush(fd, TCIOFLUSH);
+    int error_type = 0;
+    int nbytes_read;
+    std::unique_lock<std::mutex> guard(osaCommsLock);
+    tcflush(fd, TCIOFLUSH);
+    do {
+        char discard_data[RB_MAX_LEN] = {0};
+        error_type = tty_read_section_expanded(fd, discard_data, '#', 0, 1000, &nbytes_read);
+        if (error_type >= 0) {
+            LOGF_DEBUG("flushIO: Information in buffer: Bytes: %u, string: %s", nbytes_read, discard_data);
+        }
+        //LOGF_DEBUG("flushIO: error_type = %i", error_type);
+    }
+    while (error_type > 0);
+
+    return 0;
+}
+
+int onstepAux::charToInt (char *inString)
+{
+    int value = conversion_error;
+    try {
+        value = std::stoi(inString);
+    } catch (const std::invalid_argument&) {
+    } catch (const std::out_of_range&) {
+    }
+    return value;
+}
+
+/*******************************************************
+ * Block outgoing command until previous return is clear
+ * *****************************************************/
+void onstepAux::blockUntilClear()
+{
+    // Blocking wait for last command response to clear
+    while (waitingForResponse) {
+        usleep(((OsaTimeoutSeconds * 1000000) + OsaTimeoutMicroSeconds) / 10);
+        //        usleep(OCSTimeoutMicroSeconds / 10);
+    }
+    // Grab the response waiting command blocker
+    waitingForResponse = true;
+}
+
+/*********************************************
+ * Flush port and clear command sequence block
+ * *******************************************/
+void onstepAux::clearBlock()
+{
+    waitingForResponse = false;
+}
+

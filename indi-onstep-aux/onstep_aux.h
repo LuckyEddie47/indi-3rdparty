@@ -36,6 +36,9 @@
 
 #define CDRIVER_VERSION_MAJOR           1
 #define CDRIVER_VERSION_MINOR           0
+#define RB_MAX_LEN 64
+#define CMD_MAX_LEN 32
+enum ResponseErrors {RES_ERR_FORMAT = -1001};
 
 /***************************** myDCP4ESP32 Commands **************************/
 //
@@ -176,16 +179,35 @@ class onstepAux : public INDI::DefaultDevice
         bool setChannelBoost(unsigned int channel, unsigned int value);
         bool getActiveChannels();
 
+        int conversion_error = -10000;
+
         Connection::Serial *serialConnection { nullptr };
         Connection::TCP *tcpConnection { nullptr };
-
         int PortFD { -1 };
-        
         uint8_t osaConnection { CONNECTION_SERIAL | CONNECTION_TCP };
 
         // MyDCP4ESP Timeouts
         static const uint8_t MDCP_READ_TIMEOUT { 10 };   // seconds
         static const long    MDCP_SMALL_DELAY  { 50 };   // 50ms delay from send command to read response
+
+        // Command sequence enforcement
+        bool waitingForResponse = false;
+
+        bool sendOsaCommand(const char *cmd);
+        bool sendOsaCommandBlind(const char *cmd);
+        int flushIO(int fd);
+        int getCommandSingleCharResponse(int fd, char *data, const char *cmd); //Reimplemented from getCommandString
+        int getCommandSingleCharErrorOrLongResponse(int fd, char *data, const char *cmd); //Reimplemented from getCommandString
+        int getCommandDoubleResponse(int fd, double *value, char *data,
+                                     const char *cmd); //Reimplemented from getCommandString Will return a double, and raw value.
+        int getCommandIntResponse(int fd, int *value, char *data, const char *cmd);
+        int getCommandIntFromCharResponse(int fd, char *data, int *response, const char *cmd); //Calls getCommandSingleCharErrorOrLongResponse with conversion of return
+        int charToInt(char *inString);
+        void blockUntilClear();
+        void clearBlock();
+
+        long int OsaTimeoutSeconds = 0;
+        long int OsaTimeoutMicroSeconds = 100000;
 
         enum
         {
