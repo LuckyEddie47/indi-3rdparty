@@ -40,6 +40,13 @@
 #define CMD_MAX_LEN 32
 enum ResponseErrors {RES_ERR_FORMAT = -1001};
 
+// General commands
+//-----------------
+
+// Get Product (compatibility)
+#define Osa_handshake ":GVP#"
+// Returns: On-Step#
+
 /***************************** myDCP4ESP32 Commands **************************/
 //
 // Commands and responses are string types

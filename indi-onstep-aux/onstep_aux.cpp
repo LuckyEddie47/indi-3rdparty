@@ -407,35 +407,88 @@ bool onstepAux::getActiveChannels()
     return true;
 }
 
+//bool onstepAux::Handshake()
+//{
+//     if (getActiveConnection() == serialConnection)
+//    {
+//        PortFD = serialConnection->getPortFD();
+//    }
+//    else if (getActiveConnection() == tcpConnection)
+//    {
+//        PortFD = tcpConnection->getPortFD();
+//    }
+//
+//    int tries = 2;
+//    do
+//    {
+//        if (Ack())
+//        {
+//            LOG_INFO("OnStep Aux device is online.");
+////            if (!getActiveChannels())
+////                LOG_INFO("Could not determine active channels. Default to all active.");
+//            return true;
+//        }
+//        LOG_INFO("Error retrieving data from OnStep Aux device, retrying...");
+//    }
+//    while (--tries > 0 );
+//
+//    LOG_INFO("Error retrieving data from OnStep Aux device, please ensure controller "
+//             "is powered and the port is correct.");
+//
+//    return false;
+//}
+
+/***************************************************************
+ * Called from Dome, BaseDevice to establish contact with device
+ **************************************************************/
 bool onstepAux::Handshake()
 {
-     if (getActiveConnection() == serialConnection)
-    {
-        PortFD = serialConnection->getPortFD();
-    }
-    else if (getActiveConnection() == tcpConnection)
-    {
-        PortFD = tcpConnection->getPortFD();
-    }
-    
-    int tries = 2;
-    do
-    {
-        if (Ack())
-        {
-            LOG_INFO("myDCP4ESP32 is online. Getting device parameters...");
-            if (!getActiveChannels())
-                LOG_INFO("Could not determine active channels. Default to all active.");
-            return true;
-        }
-        LOG_INFO("Error retrieving data from myDCP4ESP32, retrying...");
-    }
-    while (--tries > 0 );
+    bool handshake_status = false;
 
-    LOG_INFO("Error retrieving data from myDCP4ESP32, please ensure controller "
-             "is powered and the port is correct.");
-  
-    return false;
+    if (getActiveConnection() == serialConnection) {
+        PortFD = serialConnection->getPortFD();
+        LOG_INFO("Non-Network based connection, detection timeouts set to 0.1 seconds");
+        OsaTimeoutMicroSeconds = 100000;
+        OsaTimeoutSeconds = 0;
+    } else if (getActiveConnection() == tcpConnection) {
+        PortFD = tcpConnection->getPortFD();
+        LOG_INFO("Network based connection, detection timeouts set to 1 second");
+        OsaTimeoutMicroSeconds = 0;
+        OsaTimeoutSeconds = 1;
+    }
+
+    if (PortFD > 0) {
+//        Connection::Interface *activeConnection = getActiveConnection();
+//        if (!activeConnection->name().compare("CONNECTION_TCP")) {
+//            LOG_INFO("Network based connection, detection timeouts set to 1 second");
+//            OsaTimeoutMicroSeconds = 0;
+//            OsaTimeoutSeconds = 1;
+//        }
+//        else {
+//            LOG_INFO("Non-Network based connection, detection timeouts set to 0.1 seconds");
+//            OsaTimeoutMicroSeconds = 100000;
+//            OsaTimeoutSeconds = 0;
+//        }
+
+        char handshake_response[RB_MAX_LEN] = {0};
+        handshake_status = getCommandSingleCharErrorOrLongResponse(PortFD, handshake_response,
+                                                                                      Osa_handshake);
+        if (strcmp(handshake_response, "On-Step") == 0)
+        {
+            LOG_DEBUG("OnStep Aux handshake established");
+            handshake_status = true;
+//            GetCapabilites();
+//            SlowTimer.start(60000);
+        }
+        else {
+            LOGF_DEBUG("OnStep Aux handshake error, reponse was: %s", handshake_response);
+        }
+    }
+    else {
+        LOG_ERROR("OnStep Aux can't handshake, device not connected");
+    }
+
+    return handshake_status;
 }
 
 bool onstepAux::Ack()
