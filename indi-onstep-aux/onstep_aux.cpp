@@ -27,27 +27,25 @@
 
 */
 
-// Debug only
-
- #include <signal.h>
- #include <unistd.h>
-
-// Debug only end
-
 #include "onstep_aux.h"
 #include "connectionplugins/connectiontcp.h"
 #include "connectionplugins/connectionserial.h"
 #include "indicom.h"
 
 #include <cstring>
-//#include <string>
 #include <memory>
 #include <termios.h>
 #include <unistd.h>
 #include <mutex>
 
+// Debug only - required for attaching debugger
+// #include <signal.h>
+// #include <unistd.h>
+// Debug only end
+
 // Custom tabs
 #define MANUAL_TAB "Manual"
+#define OUTPUTS_TAB "Outputs"
 
 // Define auto pointer to ourselves
 std::unique_ptr<onstepAux> onstepaux(new onstepAux());
@@ -60,12 +58,15 @@ onstepAux::onstepAux()
     // Debug only
     // Halts the process at this point. Allows remote debugger to attach which is required
     // when launching the driver from a client eg. Ekos
-     kill(getpid(), SIGSTOP);
+    // kill(getpid(), SIGSTOP);
     // Debug only end
 
     setVersion(0, 1);
 }
 
+/**********************************************
+ * Called from defaultDevice after construction
+ **********************************************/
 bool onstepAux::initProperties()
 {
     DefaultDevice::initProperties();
@@ -99,6 +100,73 @@ bool onstepAux::initProperties()
         registerConnection(tcpConnection);
     }
 
+    // Output tab controls
+    //--------------------
+    IUFillSwitchVector(&Output1SP, Output1S, SWITCH_TOGGLE_COUNT, getDeviceName(), "OUTPUT1", "Device 1",
+                       OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_OK);
+    IUFillSwitch(&Output1S[ON_SWITCH], "OUTPUT1_ON", "ON", ISS_OFF);
+    IUFillSwitch(&Output1S[OFF_SWITCH], "OUTPUT1_OFF", "OFF", ISS_ON);
+    IUFillTextVector(&Output_Name1TP, Output_Name1T, 1, getDeviceName(), "OUTPUT_1_NAME", "Device 1",
+                     OUTPUTS_TAB, IP_RO, 60, IPS_OK);
+    IUFillText(&Output_Name1T[0], "DEVICE_1_NAME", "Name", "");
+
+    IUFillSwitchVector(&Output2SP, Output2S, SWITCH_TOGGLE_COUNT, getDeviceName(), "OUTPUT2", "Device 2",
+                       OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_OK);
+    IUFillSwitch(&Output2S[ON_SWITCH], "OUTPUT2_ON", "ON", ISS_OFF);
+    IUFillSwitch(&Output2S[OFF_SWITCH], "OUTPUT2_OFF", "OFF", ISS_ON);
+    IUFillTextVector(&Output_Name2TP, Output_Name2T, 1, getDeviceName(), "OUTPUT_2_NAME", "Device 2",
+                     OUTPUTS_TAB, IP_RO, 60, IPS_OK);
+    IUFillText(&Output_Name2T[0], "DEVICE_2_NAME", "Name", "");
+
+    IUFillSwitchVector(&Output3SP, Output3S, SWITCH_TOGGLE_COUNT, getDeviceName(), "OUTPUT3", "Device 3",
+                       OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_OK);
+    IUFillSwitch(&Output3S[ON_SWITCH], "OUTPUT3_ON", "ON", ISS_OFF);
+    IUFillSwitch(&Output3S[OFF_SWITCH], "OUTPUT3_OFF", "OFF", ISS_ON);
+    IUFillTextVector(&Output_Name3TP, Output_Name3T, 1, getDeviceName(), "OUTPUT_3_NAME", "Device 3",
+                     OUTPUTS_TAB, IP_RO, 60, IPS_OK);
+    IUFillText(&Output_Name3T[0], "DEVICE_3_NAME", "Name", "");
+
+    IUFillSwitchVector(&Output4SP, Output4S, SWITCH_TOGGLE_COUNT, getDeviceName(), "OUTPUT4", "Device 4",
+                       OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_OK);
+    IUFillSwitch(&Output4S[ON_SWITCH], "OUTPUT4_ON", "ON", ISS_OFF);
+    IUFillSwitch(&Output4S[OFF_SWITCH], "OUTPUT4_OFF", "OFF", ISS_ON);
+    IUFillTextVector(&Output_Name4TP, Output_Name4T, 1, getDeviceName(), "OUTPUT_4_NAME", "Device 4",
+                     OUTPUTS_TAB, IP_RO, 60, IPS_OK);
+    IUFillText(&Output_Name4T[0], "DEVICE_4_NAME", "Name", "");
+
+    IUFillSwitchVector(&Output5SP, Output5S, SWITCH_TOGGLE_COUNT, getDeviceName(), "OUTPUT5", "Device 5",
+                       OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_OK);
+    IUFillSwitch(&Output5S[ON_SWITCH], "OUTPUT5_ON", "ON", ISS_OFF);
+    IUFillSwitch(&Output5S[OFF_SWITCH], "OUTPUT5_OFF", "OFF", ISS_ON);
+    IUFillTextVector(&Output_Name5TP, Output_Name5T, 1, getDeviceName(), "OUTPUT_5_NAME", "Device 5",
+                     OUTPUTS_TAB, IP_RO, 60, IPS_OK);
+    IUFillText(&Output_Name5T[0], "DEVICE_5_NAME", "Name", "");
+
+    IUFillSwitchVector(&Output6SP, Output6S, SWITCH_TOGGLE_COUNT, getDeviceName(), "OUTPUT6", "Device 6",
+                       OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_OK);
+    IUFillSwitch(&Output6S[ON_SWITCH], "OUTPUT6_ON", "ON", ISS_OFF);
+    IUFillSwitch(&Output6S[OFF_SWITCH], "OUTPUT6_OFF", "OFF", ISS_ON);
+    IUFillTextVector(&Output_Name6TP, Output_Name6T, 1, getDeviceName(), "OUTPUT_6_NAME", "Device 6",
+                     OUTPUTS_TAB, IP_RO, 60, IPS_OK);
+    IUFillText(&Output_Name6T[0], "DEVICE_6_NAME", "Name", "");
+
+    IUFillSwitchVector(&Output7SP, Output7S, SWITCH_TOGGLE_COUNT, getDeviceName(), "OUTPUT7", "Device 7",
+                       OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_OK);
+    IUFillSwitch(&Output7S[ON_SWITCH], "OUTPUT7_ON", "ON", ISS_OFF);
+    IUFillSwitch(&Output7S[OFF_SWITCH], "OUTPUT7_OFF", "OFF", ISS_ON);
+    IUFillTextVector(&Output_Name7TP, Output_Name7T, 1, getDeviceName(), "OUTPUT_7_NAME", "Device 7",
+                     OUTPUTS_TAB, IP_RO, 60, IPS_OK);
+    IUFillText(&Output_Name7T[0], "DEVICE_7_NAME", "Name", "");
+
+    IUFillSwitchVector(&Output8SP, Output8S, SWITCH_TOGGLE_COUNT, getDeviceName(), "OUTPUT8", "Device 8",
+                       OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_OK);
+    IUFillSwitch(&Output8S[ON_SWITCH], "OUTPUT8_ON", "ON", ISS_OFF);
+    IUFillSwitch(&Output8S[OFF_SWITCH], "OUTPUT8_OFF", "OFF", ISS_ON);
+    IUFillTextVector(&Output_Name8TP, Output_Name8T, 1, getDeviceName(), "OUTPUT_8_NAME", "Device 8",
+                     OUTPUTS_TAB, IP_RO, 60, IPS_OK);
+    IUFillText(&Output_Name8T[0], "DEVICE_8_NAME", "Name", "");
+
+
     // Manual tab controls
     //--------------------
 
@@ -123,10 +191,75 @@ bool onstepAux::updateProperties()
         loadConfig(true);
         timerIndex = SetTimer(getCurrentPollingPeriod());
 
+        if (outputs[0] > 0) {
+            defineProperty(&Output1SP);
+            defineProperty(&Output_Name1TP);
+        }
+        if (outputs[1] > 0) {
+            defineProperty(&Output2SP);
+            defineProperty(&Output_Name2TP);
+        }
+        if (outputs[2] > 0) {
+            defineProperty(&Output3SP);
+            defineProperty(&Output_Name3TP);
+        }
+        if (outputs[3] > 0) {
+            defineProperty(&Output4SP);
+            defineProperty(&Output_Name4TP);
+        }
+        if (outputs[4] > 0) {
+            defineProperty(&Output5SP);
+            defineProperty(&Output_Name5TP);
+        }
+        if (outputs[5] > 0) {
+            defineProperty(&Output6SP);
+            defineProperty(&Output_Name6TP);
+        }
+        if (outputs[6] > 0) {
+            defineProperty(&Output7SP);
+            defineProperty(&Output_Name7TP);
+        }
+        if (outputs[7] > 0) {
+            defineProperty(&Output8SP);
+            defineProperty(&Output_Name8TP);
+        }
+
         // Debug only
         defineProperty(&Arbitary_CommandTP);
         // Debug only end
     } else {
+        if (outputs[0] > 0) {
+            deleteProperty(Output1SP.name);
+            deleteProperty(Output_Name1TP.name);
+        }
+        if (outputs[1] > 0) {
+            deleteProperty(Output2SP.name);
+            deleteProperty(Output_Name2TP.name);
+        }
+        if (outputs[2] > 0) {
+            deleteProperty(Output3SP.name);
+            deleteProperty(Output_Name3TP.name);
+        }
+        if (outputs[3] > 0) {
+            deleteProperty(Output4SP.name);
+            deleteProperty(Output_Name4TP.name);
+        }
+        if (outputs[4] > 0) {
+            deleteProperty(Output5SP.name);
+            deleteProperty(Output_Name5TP.name);
+        }
+        if (outputs[5] > 0) {
+            deleteProperty(Output6SP.name);
+            deleteProperty(Output_Name6TP.name);
+        }
+        if (outputs[6] > 0) {
+            deleteProperty(Output7SP.name);
+            deleteProperty(Output_Name7TP.name);
+        }
+        if (outputs[7] > 0) {
+            deleteProperty(Output8SP.name);
+            deleteProperty(Output_Name8TP.name);
+        }
 
         // Debug only
         deleteProperty(Arbitary_CommandTP.name);
@@ -165,27 +298,125 @@ bool onstepAux::Handshake()
 
     if (PortFD > 0) {
         char handshake_response[RB_MAX_LEN] = {0};
-        handshake_status = getCommandSingleCharErrorOrLongResponse(PortFD, handshake_response,
-                                                                                      Osa_handshake);
+
+        // We send a handshake blind (ignore the return) as OnStepX always seems to return a unterminated 0
+        // on the first command after connect, so this gets it out of the way
+        sendOsaCommandBlind(Osa_handshake);
+        auto response = getCommandSingleCharErrorOrLongResponse(PortFD, handshake_response, Osa_handshake);
+        (void)response;
         if (strcmp(handshake_response, "On-Step") == 0)
         {
-            LOG_DEBUG("OnStep Aux handshake established");
-            handshake_status = true;
-//            GetCapabilites();
-//            SlowTimer.start(60000);
-        }
-        else {
+            // This is checking that the connected OnStep device does not have a mount defined
+            auto response = sendOsaCommand(Osa_noMount);
+            if (response) {
+                LOG_DEBUG("OnStep Aux handshake established");
+                handshake_status = true;
+                getCapabilities();
+            //            SlowTimer.start(60000);
+            } else {
+                LOG_ERROR("The connected OnStep device has a mount and can not be used with this driver");
+            }
+        } else {
             LOGF_DEBUG("OnStep Aux handshake error, reponse was: %s", handshake_response);
         }
-    }
-    else {
+    } else {
         LOG_ERROR("OnStep Aux can't handshake, device not connected");
     }
 
     return handshake_status;
 }
 
-
+/**************************************************
+ * Discover features of the connected OnStep device
+ **************************************************/
+void onstepAux::getCapabilities()
+{
+    // Get feature definitions
+    char feature_definitions_response[RB_MAX_LEN] = {0};
+    int feature_definitions_error_or_fail = getCommandSingleCharErrorOrLongResponse(PortFD, feature_definitions_response,
+                                                                                                Osa_getFeatureDefinitions);
+    // Return should be 8 features + 1 terminator bytes long
+    if (feature_definitions_error_or_fail == (OUTPUT_COUNT + 1)) {
+        for (int outputNo = 0; outputNo < OUTPUT_COUNT; outputNo ++) {
+            char output = feature_definitions_response[outputNo];
+            if (charToInt(&output) != conversion_error) {
+                outputs[outputNo] = charToInt(&output);
+            }
+        }
+        // Defined devices return a 1, undefined return 0
+        // so we can sum these to check if any are defined, if not then keep tab hidden
+        int outputsDisabled = 0;
+        for (int outputNo = 0; outputNo < OUTPUT_COUNT; outputNo ++) {
+            outputsDisabled += outputs[outputNo];
+        }
+        if (outputsDisabled > 0) {
+            outputs_tab_enabled = true;
+            LOG_INFO("OnStep Aux has feature device(s), enabling tab");
+            for (int deviceNo = 1; deviceNo < OUTPUT_COUNT; deviceNo ++) {
+                if (outputs[(deviceNo - 1)] == 1) {
+                    char feature_definition_response[RB_MAX_LEN] = {0};
+                    char get_feature_definition_command[CMD_MAX_LEN] = {0};
+                    sprintf(get_feature_definition_command, "%s%i%s",
+                            Osa_getFeatureNameTypePart, deviceNo, Osa_command_terminator);
+                    int feature_definition_error_or_fail = getCommandSingleCharErrorOrLongResponse(PortFD, feature_definition_response,
+                                                                                                 get_feature_definition_command);
+                    if (feature_definition_error_or_fail > 0) {
+                        char *split;
+                        split = strtok(feature_definition_response, ",");
+                        switch(deviceNo) {
+                            case 1:
+                                indi_strlcpy(OUTPUT1_NAME, split, sizeof(OUTPUT1_NAME));
+                                IUSaveText(&Output_Name1T[0], OUTPUT1_NAME);
+                                IDSetText(&Output_Name1TP, nullptr);
+                                break;
+                            case 2:
+                                indi_strlcpy(OUTPUT2_NAME, split, sizeof(OUTPUT2_NAME));
+                                IUSaveText(&Output_Name2T[0], OUTPUT2_NAME);
+                                IDSetText(&Output_Name2TP, nullptr);
+                                break;
+                            case 3:
+                                indi_strlcpy(OUTPUT3_NAME, split, sizeof(OUTPUT3_NAME));
+                                IUSaveText(&Output_Name3T[0], OUTPUT3_NAME);
+                                IDSetText(&Output_Name3TP, nullptr);
+                                break;
+                            case 4:
+                                indi_strlcpy(OUTPUT4_NAME, split, sizeof(OUTPUT4_NAME));
+                                IUSaveText(&Output_Name4T[0], OUTPUT4_NAME);
+                                IDSetText(&Output_Name4TP, nullptr);
+                                break;
+                            case 5:
+                                indi_strlcpy(OUTPUT5_NAME, split, sizeof(OUTPUT5_NAME));
+                                IUSaveText(&Output_Name5T[0], OUTPUT5_NAME);
+                                IDSetText(&Output_Name5TP, nullptr);
+                                break;
+                            case 6:
+                                indi_strlcpy(OUTPUT6_NAME, split, sizeof(OUTPUT6_NAME));
+                                IUSaveText(&Output_Name6T[0], OUTPUT6_NAME);
+                                IDSetText(&Output_Name6TP, nullptr);
+                                break;
+                            case 7:
+                                indi_strlcpy(OUTPUT7_NAME, split, sizeof(OUTPUT7_NAME));
+                                IUSaveText(&Output_Name7T[0], OUTPUT7_NAME);
+                                IDSetText(&Output_Name7TP, nullptr);
+                                break;
+                            case 8:
+                                indi_strlcpy(OUTPUT8_NAME, split, sizeof(OUTPUT8_NAME));
+                                IUSaveText(&Output_Name8T[0], OUTPUT8_NAME);
+                                IDSetText(&Output_Name8TP, nullptr);
+                                break;
+                            default:
+                                break;
+                        }
+                    }
+                }
+            }
+        } else {
+            LOG_INFO("OnStep Aux device does not have features(s), disabling tab");
+        }
+    } else if (strcmp(feature_definitions_response, "0") == 0) {
+        LOG_INFO("OnStep Aux device does not have features(s), disabling tab");
+    }
+}
 
 // Reboot the Dew Controller then wait to reconnect
 //bool onstepAux::rebootController()
@@ -311,9 +542,8 @@ bool onstepAux::sendOsaCommandBlind(const char *cmd)
     tcflush(PortFD, TCIFLUSH);
     if ((error_type = tty_write_string(PortFD, cmd, &nbytes_write)) != TTY_OK) {
         LOGF_ERROR("CHECK CONNECTION: Error sending command %s", cmd);
-        waitingForResponse = false;
+        clearBlock();
         return 0; //Fail if we can't write
-        //return error_type;
     }
     return 1;
 }
@@ -343,7 +573,6 @@ bool onstepAux::sendOsaCommand(const char *cmd)
 
     tcflush(PortFD, TCIFLUSH);
     DEBUGF(INDI::Logger::DBG_DEBUG, "RES <%c>", response[0]);
-    //waitingForResponse = false;
     clearBlock();
 
     if (nbytes_read < 1) {
@@ -391,7 +620,6 @@ int onstepAux::getCommandSingleCharResponse(int fd, char *data, const char *cmd)
     }
 
     DEBUGF(INDI::Logger::DBG_DEBUG, "RES <%s>", data);
-    //waitingForResponse = false;
     clearBlock();
 
     return nbytes_read;
@@ -432,7 +660,6 @@ int onstepAux::getCommandDoubleResponse(int fd, double *value, char *data, const
     }
 
     DEBUGF(INDI::Logger::DBG_DEBUG, "RES <%s>", data);
-    //waitingForResponse = false;
     clearBlock();
 
     if (error_type != TTY_OK) {
@@ -487,7 +714,6 @@ int onstepAux::getCommandIntResponse(int fd, int *value, char *data, const char 
     }
 
     DEBUGF(INDI::Logger::DBG_DEBUG, "RES <%s>", data);
-    //waitingForResponse = false;
     clearBlock();
 
     if (error_type != TTY_OK) {
@@ -541,7 +767,6 @@ int onstepAux::getCommandSingleCharErrorOrLongResponse(int fd, char *data, const
     }
 
     DEBUGF(INDI::Logger::DBG_DEBUG, "RES <%s>", data);
-    //waitingForResponse = false;
     clearBlock();
 
     if (error_type != TTY_OK) {

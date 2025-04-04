@@ -31,21 +31,36 @@
 
 #include <defaultdevice.h>
 
-#include <time.h>           // for nsleep() 
-#include <errno.h>          // for nsleep() 
-
-#define CDRIVER_VERSION_MAJOR           1
-#define CDRIVER_VERSION_MINOR           0
 #define RB_MAX_LEN 64
 #define CMD_MAX_LEN 32
 enum ResponseErrors {RES_ERR_FORMAT = -1001};
 
-// General commands
-//-----------------
+// OnStep commands
+//----------------
 
 // Get Product (compatibility)
 #define Osa_handshake ":GVP#"
 // Returns: On-Step#
+
+// Get Status
+#define Osa_noMount ":GU#"
+// Normally for OnStep this returns the mount status
+// This driver is only for use with OnStep devices that have no mount
+// For our use there is no return (unterminated 0) as the lack of mount
+// disables the mount command handler. Any return indicates that the
+// OnStep device has a mount and should not be used with this driver
+
+// Get feature(s) definitions
+#define Osa_getFeatureDefinitions ":GXY0#"
+
+// Get feature(s) enabled and name
+#define Osa_getFeatureNameTypePart ":GXY"
+
+// Get feature type
+#define Osa_getFeaturePart ":GXX"
+
+// Set feature
+#define Osa_setFeaturePart ":SXX"
 
 // For dynamically assembled commands
 //-----------------------------------
@@ -80,6 +95,7 @@ class onstepAux : public INDI::DefaultDevice
     private:
         int  timerIndex;
         bool Handshake();
+        void getCapabilities();
 
         int conversion_error = -10000;
 
@@ -106,6 +122,72 @@ class onstepAux : public INDI::DefaultDevice
 
         long int OsaTimeoutSeconds = 0;
         long int OsaTimeoutMicroSeconds = 100000;
+
+        enum {
+            ON_SWITCH,
+            OFF_SWITCH,
+            SWITCH_TOGGLE_COUNT
+        };
+
+        // Outputs tab controls
+        //-------------------
+        bool outputs_tab_enabled = false;
+
+        enum {
+            OUTPUT1,
+            OUTPUT2,
+            OUTPUT3,
+            OUTPUT4,
+            OUTPUT5,
+            OUTPUT6,
+            OUTPUT7,
+            OUTPUT8,
+            OUTPUT_COUNT
+        };
+
+        int outputs[OUTPUT_COUNT] = {0};
+
+        char OUTPUT1_NAME[RB_MAX_LEN];
+        char OUTPUT2_NAME[RB_MAX_LEN];
+        char OUTPUT3_NAME[RB_MAX_LEN];
+        char OUTPUT4_NAME[RB_MAX_LEN];
+        char OUTPUT5_NAME[RB_MAX_LEN];
+        char OUTPUT6_NAME[RB_MAX_LEN];
+        char OUTPUT7_NAME[RB_MAX_LEN];
+        char OUTPUT8_NAME[RB_MAX_LEN];
+
+        ISwitchVectorProperty Output1SP;
+        ISwitch Output1S[SWITCH_TOGGLE_COUNT];
+        ISwitchVectorProperty Output2SP;
+        ISwitch Output2S[SWITCH_TOGGLE_COUNT];
+        ISwitchVectorProperty Output3SP;
+        ISwitch Output3S[SWITCH_TOGGLE_COUNT];
+        ISwitchVectorProperty Output4SP;
+        ISwitch Output4S[SWITCH_TOGGLE_COUNT];
+        ISwitchVectorProperty Output5SP;
+        ISwitch Output5S[SWITCH_TOGGLE_COUNT];
+        ISwitchVectorProperty Output6SP;
+        ISwitch Output6S[SWITCH_TOGGLE_COUNT];
+        ISwitchVectorProperty Output7SP;
+        ISwitch Output7S[SWITCH_TOGGLE_COUNT];
+        ISwitchVectorProperty Output8SP;
+        ISwitch Output8S[SWITCH_TOGGLE_COUNT];
+        ITextVectorProperty Output_Name1TP;
+        IText Output_Name1T[1] {};
+        ITextVectorProperty Output_Name2TP;
+        IText Output_Name2T[1] {};
+        ITextVectorProperty Output_Name3TP;
+        IText Output_Name3T[1] {};
+        ITextVectorProperty Output_Name4TP;
+        IText Output_Name4T[1] {};
+        ITextVectorProperty Output_Name5TP;
+        IText Output_Name5T[1] {};
+        ITextVectorProperty Output_Name6TP;
+        IText Output_Name6T[1] {};
+        ITextVectorProperty Output_Name7TP;
+        IText Output_Name7T[1] {};
+        ITextVectorProperty Output_Name8TP;
+        IText Output_Name8T[1] {};
 
         // Manual tab controls
         //--------------------
