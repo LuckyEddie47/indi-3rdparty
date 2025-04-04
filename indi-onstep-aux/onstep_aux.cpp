@@ -458,11 +458,120 @@ void onstepAux::getCapabilities()
 
 bool onstepAux::ISNewSwitch(const char *dev, const char *name, ISState *states, char *names[], int n)
 {
-    
-    if (!dev || strcmp(dev, getDeviceName()))
-        return false;
+    if (dev != nullptr && strcmp(dev, getDeviceName()) == 0) {
 
-    return INDI::DefaultDevice::ISNewSwitch(dev, name, states, names, n);
+        LOGF_DEBUG("Got an IsNewSwitch for: %s", name);
+
+        // Output devices
+        //---------------
+        if (strcmp(Output1SP.name, name) == 0) {
+            IUUpdateSwitch(&Output1SP, states, names, n);
+            for (int i = 0; i < n; i++) {
+                if (strcmp(names[i], "OUTPUT1_ON") == 0) {
+                    char set_output_1_on_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_1_on_cmd, "%s1,V1%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output1SP, nullptr);
+                    return sendOsaCommand(set_output_1_on_cmd);
+                } else if (strcmp(names[i], "OUTPUT1_OFF") == 0) {
+                    char set_output_1_off_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_1_off_cmd, "%s1,V0%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output1SP, nullptr);
+                    return sendOsaCommand(set_output_1_off_cmd);
+                }
+            }
+            IDSetSwitch(&Output1SP, nullptr);
+            return false;
+        } else if (strcmp(Output2SP.name, name) == 0) {
+            IUUpdateSwitch(&Output2SP, states, names, n);
+            for (int i = 0; i < n; i++) {
+                if (strcmp(names[i], "OUTPUT2_ON") == 0) {
+                    char set_output_2_on_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_2_on_cmd, "%s2,V1%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output2SP, nullptr);
+                    return sendOsaCommand(set_output_2_on_cmd);
+                } else if (strcmp(names[i], "OUTPUT2_OFF") == 0) {
+                    char set_output_2_off_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_2_off_cmd, "%s2,V0%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output2SP, nullptr);
+                    return sendOsaCommand(set_output_2_off_cmd);
+                }
+            }
+            IDSetSwitch(&Output2SP, nullptr);
+            return false;
+        } else if (strcmp(Output3SP.name, name) == 0) {
+            IUUpdateSwitch(&Output3SP, states, names, n);
+            for (int i = 0; i < n; i++) {
+                if (strcmp(names[i], "OUTPUT3_ON") == 0) {
+                    char set_output_3_on_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_3_on_cmd, "%s3,V1%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output3SP, nullptr);
+                    return sendOsaCommand(set_output_3_on_cmd);
+                } else if (strcmp(names[i], "OUTPUT3_OFF") == 0) {
+                    char set_output_3_off_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_3_off_cmd, "%s3,V0%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output3SP, nullptr);
+                    return sendOsaCommand(set_output_3_off_cmd);
+                }
+            }
+            IDSetSwitch(&Output3SP, nullptr);
+            return false;
+        } else if (strcmp(Output4SP.name, name) == 0) {
+            IUUpdateSwitch(&Output4SP, states, names, n);
+            for (int i = 0; i < n; i++) {
+                if (strcmp(names[i], "OUTPUT4_ON") == 0) {
+                    char set_output_4_on_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_4_on_cmd, "%s4,V1%s", Osa_setFeaturePart,  Osa_command_terminator);
+                    IDSetSwitch(&Output4SP, nullptr);
+                    return sendOsaCommand(set_output_4_on_cmd);
+                } else if (strcmp(names[i], "OUTPUT4_OFF") == 0) {
+                    char set_output_4_off_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_4_off_cmd, "%s4,V0%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output4SP, nullptr);
+                    return sendOsaCommand(set_output_4_off_cmd);
+                }
+            }
+            IDSetSwitch(&Output4SP, nullptr);
+            return false;
+        } else if (strcmp(Output5SP.name, name) == 0) {
+            IUUpdateSwitch(&Output5SP, states, names, n);
+            for (int i = 0; i < n; i++) {
+                if (strcmp(names[i], "OUTPUT5_ON") == 0) {
+                    char set_output_5_on_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_5_on_cmd, "%s5,V1%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output5SP, nullptr);
+                    return sendOsaCommand(set_output_5_on_cmd);
+                } else if (strcmp(names[i], "OUTPUT5_OFF") == 0) {
+                    char set_output_5_off_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_5_off_cmd, "%s5,V0%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output5SP, nullptr);
+                    return sendOsaCommand(set_output_5_off_cmd);
+                }
+            }
+            IDSetSwitch(&Output5SP, nullptr);
+            return false;
+        } else         if (strcmp(Output6SP.name, name) == 0) {
+            IUUpdateSwitch(&Output6SP, states, names, n);
+            for (int i = 0; i < n; i++) {
+                if (strcmp(names[i], "OUTPUT6_ON") == 0) {
+                    char set_output_6_on_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_6_on_cmd, "%s6,V1%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output6SP, nullptr);
+                    return sendOsaCommand(set_output_6_on_cmd);
+                } else if (strcmp(names[i], "OUTPUT6_OFF") == 0) {
+                    char set_output_6_off_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_6_off_cmd, "%s6,V0%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output6SP, nullptr);
+                    return sendOsaCommand(set_output_6_off_cmd);
+                }
+            }
+            IDSetSwitch(&Output6SP, nullptr);
+            return false;
+        }
+
+        return INDI::DefaultDevice::ISNewSwitch(dev, name, states, names, n);
+    } else {
+        return false;
+    }
 }
 
 bool onstepAux::ISNewNumber(const char *dev, const char *name, double values[], char *names[], int n)
