@@ -352,7 +352,7 @@ void onstepAux::getCapabilities()
         if (outputsDisabled > 0) {
             outputs_tab_enabled = true;
             LOG_INFO("OnStep Aux has feature device(s), enabling tab");
-            for (int deviceNo = 1; deviceNo < OUTPUT_COUNT; deviceNo ++) {
+            for (int deviceNo = 1; deviceNo <= OUTPUT_COUNT; deviceNo ++) {
                 if (outputs[(deviceNo - 1)] == 1) {
                     char feature_definition_response[RB_MAX_LEN] = {0};
                     char get_feature_definition_command[CMD_MAX_LEN] = {0};
