@@ -549,7 +549,7 @@ bool onstepAux::ISNewSwitch(const char *dev, const char *name, ISState *states, 
             }
             IDSetSwitch(&Output5SP, nullptr);
             return false;
-        } else         if (strcmp(Output6SP.name, name) == 0) {
+        } else if (strcmp(Output6SP.name, name) == 0) {
             IUUpdateSwitch(&Output6SP, states, names, n);
             for (int i = 0; i < n; i++) {
                 if (strcmp(names[i], "OUTPUT6_ON") == 0) {
@@ -565,6 +565,40 @@ bool onstepAux::ISNewSwitch(const char *dev, const char *name, ISState *states, 
                 }
             }
             IDSetSwitch(&Output6SP, nullptr);
+            return false;
+        } else if (strcmp(Output7SP.name, name) == 0) {
+            IUUpdateSwitch(&Output7SP, states, names, n);
+            for (int i = 0; i < n; i++) {
+                if (strcmp(names[i], "OUTPUT7_ON") == 0) {
+                    char set_output_7_on_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_7_on_cmd, "%s7,V1%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output7SP, nullptr);
+                    return sendOsaCommand(set_output_7_on_cmd);
+                } else if (strcmp(names[i], "OUTPUT7_OFF") == 0) {
+                    char set_output_7_off_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_7_off_cmd, "%s7,V0%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output7SP, nullptr);
+                    return sendOsaCommand(set_output_7_off_cmd);
+                }
+            }
+            IDSetSwitch(&Output7SP, nullptr);
+            return false;
+        } else if (strcmp(Output8SP.name, name) == 0) {
+            IUUpdateSwitch(&Output8SP, states, names, n);
+            for (int i = 0; i < n; i++) {
+                if (strcmp(names[i], "OUTPUT8_ON") == 0) {
+                    char set_output_8_on_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_8_on_cmd, "%s8,V1%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output8SP, nullptr);
+                    return sendOsaCommand(set_output_8_on_cmd);
+                } else if (strcmp(names[i], "OUTPUT8_OFF") == 0) {
+                    char set_output_8_off_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_8_off_cmd, "%s8,V0%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output8SP, nullptr);
+                    return sendOsaCommand(set_output_8_off_cmd);
+                }
+            }
+            IDSetSwitch(&Output8SP, nullptr);
             return false;
         }
 
