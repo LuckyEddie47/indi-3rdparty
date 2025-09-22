@@ -102,38 +102,70 @@ bool onstepAux::initProperties()
 
     // Output tab controls
     //--------------------
+    IUFillSwitchVector(&Output1SP, Output1S, SWITCH_TOGGLE_COUNT, getDeviceName(), "OUTPUT1", "Device 1",
+                       OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_OK);
+    IUFillSwitch(&Output1S[ON_SWITCH], "OUTPUT1_ON", "ON", ISS_OFF);
+    IUFillSwitch(&Output1S[OFF_SWITCH], "OUTPUT1_OFF", "OFF", ISS_ON);
+    IUFillTextVector(&Output_Name1TP, Output_Name1T, 1, getDeviceName(), "OUTPUT_1_NAME", "Device 1",
+                     OUTPUTS_TAB, IP_RO, 60, IPS_OK);
+    IUFillText(&Output_Name1T[0], "DEVICE_1_NAME", "Name", "");
 
-    Output1SP[OUTPUT1_ON].fill("OUTPUT1_ON", "On", ISS_OFF);
-    Output1SP[OUTPUT1_OFF].fill("OUTPUT1_OFF", "Off", ISS_ON);
-    Output1SP.fill(getDeviceName(), "OUTPUT1", OUTPUT1_NAME, OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_IDLE);
+    IUFillSwitchVector(&Output2SP, Output2S, SWITCH_TOGGLE_COUNT, getDeviceName(), "OUTPUT2", "Device 2",
+                       OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_OK);
+    IUFillSwitch(&Output2S[ON_SWITCH], "OUTPUT2_ON", "ON", ISS_OFF);
+    IUFillSwitch(&Output2S[OFF_SWITCH], "OUTPUT2_OFF", "OFF", ISS_ON);
+    IUFillTextVector(&Output_Name2TP, Output_Name2T, 1, getDeviceName(), "OUTPUT_2_NAME", "Device 2",
+                     OUTPUTS_TAB, IP_RO, 60, IPS_OK);
+    IUFillText(&Output_Name2T[0], "DEVICE_2_NAME", "Name", "");
 
-    Output2SP[OUTPUT2_ON].fill("OUTPUT2_ON", "On", ISS_OFF);
-    Output2SP[OUTPUT2_OFF].fill("OUTPUT2_OFF", "Off", ISS_ON);
-    Output2SP.fill(getDeviceName(), "OUTPUT2", OUTPUT2_NAME, OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_IDLE);
+    IUFillSwitchVector(&Output3SP, Output3S, SWITCH_TOGGLE_COUNT, getDeviceName(), "OUTPUT3", "Device 3",
+                       OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_OK);
+    IUFillSwitch(&Output3S[ON_SWITCH], "OUTPUT3_ON", "ON", ISS_OFF);
+    IUFillSwitch(&Output3S[OFF_SWITCH], "OUTPUT3_OFF", "OFF", ISS_ON);
+    IUFillTextVector(&Output_Name3TP, Output_Name3T, 1, getDeviceName(), "OUTPUT_3_NAME", "Device 3",
+                     OUTPUTS_TAB, IP_RO, 60, IPS_OK);
+    IUFillText(&Output_Name3T[0], "DEVICE_3_NAME", "Name", "");
 
-    Output3SP[OUTPUT3_ON].fill("OUTPUT3_ON", "On", ISS_OFF);
-    Output3SP[OUTPUT3_OFF].fill("OUTPUT3_OFF", "Off", ISS_ON);
-    Output3SP.fill(getDeviceName(), "OUTPUT3", OUTPUT3_NAME, OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_IDLE);
+    IUFillSwitchVector(&Output4SP, Output4S, SWITCH_TOGGLE_COUNT, getDeviceName(), "OUTPUT4", "Device 4",
+                       OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_OK);
+    IUFillSwitch(&Output4S[ON_SWITCH], "OUTPUT4_ON", "ON", ISS_OFF);
+    IUFillSwitch(&Output4S[OFF_SWITCH], "OUTPUT4_OFF", "OFF", ISS_ON);
+    IUFillTextVector(&Output_Name4TP, Output_Name4T, 1, getDeviceName(), "OUTPUT_4_NAME", "Device 4",
+                     OUTPUTS_TAB, IP_RO, 60, IPS_OK);
+    IUFillText(&Output_Name4T[0], "DEVICE_4_NAME", "Name", "");
 
-    Output4SP[OUTPUT4_ON].fill("OUTPUT4_ON", "On", ISS_OFF);
-    Output4SP[OUTPUT4_OFF].fill("OUTPUT4_OFF", "Off", ISS_ON);
-    Output4SP.fill(getDeviceName(), "OUTPUT4", OUTPUT4_NAME, OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_IDLE);
+    IUFillSwitchVector(&Output5SP, Output5S, SWITCH_TOGGLE_COUNT, getDeviceName(), "OUTPUT5", "Device 5",
+                       OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_OK);
+    IUFillSwitch(&Output5S[ON_SWITCH], "OUTPUT5_ON", "ON", ISS_OFF);
+    IUFillSwitch(&Output5S[OFF_SWITCH], "OUTPUT5_OFF", "OFF", ISS_ON);
+    IUFillTextVector(&Output_Name5TP, Output_Name5T, 1, getDeviceName(), "OUTPUT_5_NAME", "Device 5",
+                     OUTPUTS_TAB, IP_RO, 60, IPS_OK);
+    IUFillText(&Output_Name5T[0], "DEVICE_5_NAME", "Name", "");
 
-    Output5SP[OUTPUT5_ON].fill("OUTPUT5_ON", "On", ISS_OFF);
-    Output5SP[OUTPUT5_OFF].fill("OUTPUT5_OFF", "Off", ISS_ON);
-    Output5SP.fill(getDeviceName(), "OUTPUT5", OUTPUT5_NAME, OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_IDLE);
+    IUFillSwitchVector(&Output6SP, Output6S, SWITCH_TOGGLE_COUNT, getDeviceName(), "OUTPUT6", "Device 6",
+                       OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_OK);
+    IUFillSwitch(&Output6S[ON_SWITCH], "OUTPUT6_ON", "ON", ISS_OFF);
+    IUFillSwitch(&Output6S[OFF_SWITCH], "OUTPUT6_OFF", "OFF", ISS_ON);
+    IUFillTextVector(&Output_Name6TP, Output_Name6T, 1, getDeviceName(), "OUTPUT_6_NAME", "Device 6",
+                     OUTPUTS_TAB, IP_RO, 60, IPS_OK);
+    IUFillText(&Output_Name6T[0], "DEVICE_6_NAME", "Name", "");
 
-    Output6SP[OUTPUT6_ON].fill("OUTPUT6_ON", "On", ISS_OFF);
-    Output6SP[OUTPUT6_OFF].fill("OUTPUT6_OFF", "Off", ISS_ON);
-    Output6SP.fill(getDeviceName(), "OUTPUT6", OUTPUT6_NAME, OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_IDLE);
+    IUFillSwitchVector(&Output7SP, Output7S, SWITCH_TOGGLE_COUNT, getDeviceName(), "OUTPUT7", "Device 7",
+                       OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_OK);
+    IUFillSwitch(&Output7S[ON_SWITCH], "OUTPUT7_ON", "ON", ISS_OFF);
+    IUFillSwitch(&Output7S[OFF_SWITCH], "OUTPUT7_OFF", "OFF", ISS_ON);
+    IUFillTextVector(&Output_Name7TP, Output_Name7T, 1, getDeviceName(), "OUTPUT_7_NAME", "Device 7",
+                     OUTPUTS_TAB, IP_RO, 60, IPS_OK);
+    IUFillText(&Output_Name7T[0], "DEVICE_7_NAME", "Name", "");
 
-    Output7SP[OUTPUT7_ON].fill("OUTPUT7_ON", "On", ISS_OFF);
-    Output7SP[OUTPUT7_OFF].fill("OUTPUT7_OFF", "Off", ISS_ON);
-    Output7SP.fill(getDeviceName(), "OUTPUT7", OUTPUT7_NAME, OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_IDLE);
+    IUFillSwitchVector(&Output8SP, Output8S, SWITCH_TOGGLE_COUNT, getDeviceName(), "OUTPUT8", "Device 8",
+                       OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_OK);
+    IUFillSwitch(&Output8S[ON_SWITCH], "OUTPUT8_ON", "ON", ISS_OFF);
+    IUFillSwitch(&Output8S[OFF_SWITCH], "OUTPUT8_OFF", "OFF", ISS_ON);
+    IUFillTextVector(&Output_Name8TP, Output_Name8T, 1, getDeviceName(), "OUTPUT_8_NAME", "Device 8",
+                     OUTPUTS_TAB, IP_RO, 60, IPS_OK);
+    IUFillText(&Output_Name8T[0], "DEVICE_8_NAME", "Name", "");
 
-    Output8SP[OUTPUT8_ON].fill("OUTPUT8_ON", "On", ISS_OFF);
-    Output8SP[OUTPUT8_OFF].fill("OUTPUT8_OFF", "Off", ISS_ON);
-    Output8SP.fill(getDeviceName(), "OUTPUT8", OUTPUT8_NAME, OUTPUTS_TAB, IP_RW, ISR_1OFMANY, 60, IPS_IDLE);
 
     // Manual tab controls
     //--------------------
@@ -160,28 +192,36 @@ bool onstepAux::updateProperties()
         timerIndex = SetTimer(getCurrentPollingPeriod());
 
         if (outputs[0] > 0) {
-            defineProperty(Output1SP);
+            defineProperty(&Output1SP);
+            defineProperty(&Output_Name1TP);
         }
         if (outputs[1] > 0) {
-            defineProperty(Output2SP);
+            defineProperty(&Output2SP);
+            defineProperty(&Output_Name2TP);
         }
         if (outputs[2] > 0) {
-            defineProperty(Output3SP);
+            defineProperty(&Output3SP);
+            defineProperty(&Output_Name3TP);
         }
         if (outputs[3] > 0) {
-            defineProperty(Output4SP);
+            defineProperty(&Output4SP);
+            defineProperty(&Output_Name4TP);
         }
         if (outputs[4] > 0) {
-            defineProperty(Output5SP);
+            defineProperty(&Output5SP);
+            defineProperty(&Output_Name5TP);
         }
         if (outputs[5] > 0) {
-            defineProperty(Output6SP);
+            defineProperty(&Output6SP);
+            defineProperty(&Output_Name6TP);
         }
         if (outputs[6] > 0) {
-            defineProperty(Output7SP);
+            defineProperty(&Output7SP);
+            defineProperty(&Output_Name7TP);
         }
         if (outputs[7] > 0) {
-            defineProperty(Output8SP);
+            defineProperty(&Output8SP);
+            defineProperty(&Output_Name8TP);
         }
 
         // Debug only
@@ -189,28 +229,36 @@ bool onstepAux::updateProperties()
         // Debug only end
     } else {
         if (outputs[0] > 0) {
-            deleteProperty(Output1SP);
+            deleteProperty(Output1SP.name);
+            deleteProperty(Output_Name1TP.name);
         }
         if (outputs[1] > 0) {
-            deleteProperty(Output2SP);
+            deleteProperty(Output2SP.name);
+            deleteProperty(Output_Name2TP.name);
         }
         if (outputs[2] > 0) {
-            deleteProperty(Output3SP);
+            deleteProperty(Output3SP.name);
+            deleteProperty(Output_Name3TP.name);
         }
         if (outputs[3] > 0) {
-            deleteProperty(Output4SP);
+            deleteProperty(Output4SP.name);
+            deleteProperty(Output_Name4TP.name);
         }
         if (outputs[4] > 0) {
-            deleteProperty(Output5SP);
+            deleteProperty(Output5SP.name);
+            deleteProperty(Output_Name5TP.name);
         }
         if (outputs[5] > 0) {
-            deleteProperty(Output6SP);
+            deleteProperty(Output6SP.name);
+            deleteProperty(Output_Name6TP.name);
         }
         if (outputs[6] > 0) {
-            deleteProperty(Output7SP);
+            deleteProperty(Output7SP.name);
+            deleteProperty(Output_Name7TP.name);
         }
         if (outputs[7] > 0) {
-            deleteProperty(Output8SP);
+            deleteProperty(Output8SP.name);
+            deleteProperty(Output_Name8TP.name);
         }
 
         // Debug only
@@ -318,27 +366,43 @@ void onstepAux::getCapabilities()
                         switch(deviceNo) {
                             case 1:
                                 indi_strlcpy(OUTPUT1_NAME, split, sizeof(OUTPUT1_NAME));
+                                IUSaveText(&Output_Name1T[0], OUTPUT1_NAME);
+                                IDSetText(&Output_Name1TP, nullptr);
                                 break;
                             case 2:
                                 indi_strlcpy(OUTPUT2_NAME, split, sizeof(OUTPUT2_NAME));
+                                IUSaveText(&Output_Name2T[0], OUTPUT2_NAME);
+                                IDSetText(&Output_Name2TP, nullptr);
                                 break;
                             case 3:
                                 indi_strlcpy(OUTPUT3_NAME, split, sizeof(OUTPUT3_NAME));
+                                IUSaveText(&Output_Name3T[0], OUTPUT3_NAME);
+                                IDSetText(&Output_Name3TP, nullptr);
                                 break;
                             case 4:
                                 indi_strlcpy(OUTPUT4_NAME, split, sizeof(OUTPUT4_NAME));
+                                IUSaveText(&Output_Name4T[0], OUTPUT4_NAME);
+                                IDSetText(&Output_Name4TP, nullptr);
                                 break;
                             case 5:
                                 indi_strlcpy(OUTPUT5_NAME, split, sizeof(OUTPUT5_NAME));
+                                IUSaveText(&Output_Name5T[0], OUTPUT5_NAME);
+                                IDSetText(&Output_Name5TP, nullptr);
                                 break;
                             case 6:
                                 indi_strlcpy(OUTPUT6_NAME, split, sizeof(OUTPUT6_NAME));
+                                IUSaveText(&Output_Name6T[0], OUTPUT6_NAME);
+                                IDSetText(&Output_Name6TP, nullptr);
                                 break;
                             case 7:
                                 indi_strlcpy(OUTPUT7_NAME, split, sizeof(OUTPUT7_NAME));
+                                IUSaveText(&Output_Name7T[0], OUTPUT7_NAME);
+                                IDSetText(&Output_Name7TP, nullptr);
                                 break;
                             case 8:
                                 indi_strlcpy(OUTPUT8_NAME, split, sizeof(OUTPUT8_NAME));
+                                IUSaveText(&Output_Name8T[0], OUTPUT8_NAME);
+                                IDSetText(&Output_Name8TP, nullptr);
                                 break;
                             default:
                                 break;
@@ -400,231 +464,143 @@ bool onstepAux::ISNewSwitch(const char *dev, const char *name, ISState *states, 
 
         // Output devices
         //---------------
-        if (Output1SP.isNameMatch(name)) {
-            auto previous = Output1SP.findOnSwitchIndex();
-            Output1SP.update(states, names, n);
-            auto requested = Output1SP.findOnSwitchIndex();
-            if (requested < 0)
-                return true;
-            if (previous == requested) {
-                Output1SP.reset();
-                Output1SP.setState(IPS_OK);
-                Output1SP[previous].setState(ISS_ON);
-                Output1SP.apply();
-                return true;
+        if (strcmp(Output1SP.name, name) == 0) {
+            IUUpdateSwitch(&Output1SP, states, names, n);
+            for (int i = 0; i < n; i++) {
+                if (strcmp(names[i], "OUTPUT1_ON") == 0) {
+                    char set_output_1_on_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_1_on_cmd, "%s1,V1%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output1SP, nullptr);
+                    return sendOsaCommand(set_output_1_on_cmd);
+                } else if (strcmp(names[i], "OUTPUT1_OFF") == 0) {
+                    char set_output_1_off_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_1_off_cmd, "%s1,V0%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output1SP, nullptr);
+                    return sendOsaCommand(set_output_1_off_cmd);
+                }
             }
-            if (requested == 0) {
-                Output1SP.setState(IPS_OK);
-                Output1SP[requested].s = ISS_ON;
-                Output1SP.apply();
-                char set_output_1_on_cmd[CMD_MAX_LEN];
-                sprintf(set_output_1_on_cmd, "%s1,V1%s", Osa_setFeaturePart, Osa_command_terminator);
-                return sendOsaCommand(set_output_1_on_cmd);
-            } else {
-                Output1SP.setState(IPS_IDLE);
-                Output1SP[requested].s = ISS_OFF;
-                Output1SP.apply();
-                char set_output_1_off_cmd[CMD_MAX_LEN];
-                sprintf(set_output_1_off_cmd, "%s1,V0%s", Osa_setFeaturePart, Osa_command_terminator);
-                return sendOsaCommand(set_output_1_off_cmd);
+            IDSetSwitch(&Output1SP, nullptr);
+            return false;
+        } else if (strcmp(Output2SP.name, name) == 0) {
+            IUUpdateSwitch(&Output2SP, states, names, n);
+            for (int i = 0; i < n; i++) {
+                if (strcmp(names[i], "OUTPUT2_ON") == 0) {
+                    char set_output_2_on_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_2_on_cmd, "%s2,V1%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output2SP, nullptr);
+                    return sendOsaCommand(set_output_2_on_cmd);
+                } else if (strcmp(names[i], "OUTPUT2_OFF") == 0) {
+                    char set_output_2_off_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_2_off_cmd, "%s2,V0%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output2SP, nullptr);
+                    return sendOsaCommand(set_output_2_off_cmd);
+                }
             }
-        } else if (Output2SP.isNameMatch(name)) {
-            auto previous = Output2SP.findOnSwitchIndex();
-            Output2SP.update(states, names, n);
-            auto requested = Output2SP.findOnSwitchIndex();
-            if (requested < 0)
-                return true;
-            if (previous == requested) {
-                Output2SP.reset();
-                Output2SP.setState(IPS_OK);
-                Output2SP[previous].setState(ISS_ON);
-                Output2SP.apply();
-                return true;
+            IDSetSwitch(&Output2SP, nullptr);
+            return false;
+        } else if (strcmp(Output3SP.name, name) == 0) {
+            IUUpdateSwitch(&Output3SP, states, names, n);
+            for (int i = 0; i < n; i++) {
+                if (strcmp(names[i], "OUTPUT3_ON") == 0) {
+                    char set_output_3_on_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_3_on_cmd, "%s3,V1%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output3SP, nullptr);
+                    return sendOsaCommand(set_output_3_on_cmd);
+                } else if (strcmp(names[i], "OUTPUT3_OFF") == 0) {
+                    char set_output_3_off_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_3_off_cmd, "%s3,V0%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output3SP, nullptr);
+                    return sendOsaCommand(set_output_3_off_cmd);
+                }
             }
-            if (requested == 0) {
-                Output2SP.setState(IPS_OK);
-                Output2SP[requested].s = ISS_ON;
-                Output2SP.apply();
-                char set_output_2_on_cmd[CMD_MAX_LEN];
-                sprintf(set_output_2_on_cmd, "%s1,V1%s", Osa_setFeaturePart, Osa_command_terminator);
-                return sendOsaCommand(set_output_2_on_cmd);
-            } else {
-                Output2SP.setState(IPS_IDLE);
-                Output2SP[requested].s = ISS_OFF;
-                Output2SP.apply();
-                char set_output_2_off_cmd[CMD_MAX_LEN];
-                sprintf(set_output_2_off_cmd, "%s1,V0%s", Osa_setFeaturePart, Osa_command_terminator);
-                return sendOsaCommand(set_output_2_off_cmd);
+            IDSetSwitch(&Output3SP, nullptr);
+            return false;
+        } else if (strcmp(Output4SP.name, name) == 0) {
+            IUUpdateSwitch(&Output4SP, states, names, n);
+            for (int i = 0; i < n; i++) {
+                if (strcmp(names[i], "OUTPUT4_ON") == 0) {
+                    char set_output_4_on_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_4_on_cmd, "%s4,V1%s", Osa_setFeaturePart,  Osa_command_terminator);
+                    IDSetSwitch(&Output4SP, nullptr);
+                    return sendOsaCommand(set_output_4_on_cmd);
+                } else if (strcmp(names[i], "OUTPUT4_OFF") == 0) {
+                    char set_output_4_off_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_4_off_cmd, "%s4,V0%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output4SP, nullptr);
+                    return sendOsaCommand(set_output_4_off_cmd);
+                }
             }
-        } else if (Output3SP.isNameMatch(name)) {
-            auto previous = Output1SP.findOnSwitchIndex();
-            Output3SP.update(states, names, n);
-            auto requested = Output3SP.findOnSwitchIndex();
-            if (requested < 0)
-                return true;
-            if (previous == requested) {
-                Output3SP.reset();
-                Output3SP.setState(IPS_OK);
-                Output3SP[previous].setState(ISS_ON);
-                Output3SP.apply();
-                return true;
+            IDSetSwitch(&Output4SP, nullptr);
+            return false;
+        } else if (strcmp(Output5SP.name, name) == 0) {
+            IUUpdateSwitch(&Output5SP, states, names, n);
+            for (int i = 0; i < n; i++) {
+                if (strcmp(names[i], "OUTPUT5_ON") == 0) {
+                    char set_output_5_on_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_5_on_cmd, "%s5,V1%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output5SP, nullptr);
+                    return sendOsaCommand(set_output_5_on_cmd);
+                } else if (strcmp(names[i], "OUTPUT5_OFF") == 0) {
+                    char set_output_5_off_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_5_off_cmd, "%s5,V0%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output5SP, nullptr);
+                    return sendOsaCommand(set_output_5_off_cmd);
+                }
             }
-            if (requested == 0) {
-                Output3SP.setState(IPS_OK);
-                Output3SP[requested].s = ISS_ON;
-                Output3SP.apply();
-                char set_output_3_on_cmd[CMD_MAX_LEN];
-                sprintf(set_output_3_on_cmd, "%s1,V1%s", Osa_setFeaturePart, Osa_command_terminator);
-                return sendOsaCommand(set_output_3_on_cmd);
-            } else {
-                Output3SP.setState(IPS_IDLE);
-                Output3SP[requested].s = ISS_OFF;
-                Output3SP.apply();
-                char set_output_3_off_cmd[CMD_MAX_LEN];
-                sprintf(set_output_3_off_cmd, "%s1,V0%s", Osa_setFeaturePart, Osa_command_terminator);
-                return sendOsaCommand(set_output_3_off_cmd);
+            IDSetSwitch(&Output5SP, nullptr);
+            return false;
+        } else if (strcmp(Output6SP.name, name) == 0) {
+            IUUpdateSwitch(&Output6SP, states, names, n);
+            for (int i = 0; i < n; i++) {
+                if (strcmp(names[i], "OUTPUT6_ON") == 0) {
+                    char set_output_6_on_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_6_on_cmd, "%s6,V1%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output6SP, nullptr);
+                    return sendOsaCommand(set_output_6_on_cmd);
+                } else if (strcmp(names[i], "OUTPUT6_OFF") == 0) {
+                    char set_output_6_off_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_6_off_cmd, "%s6,V0%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output6SP, nullptr);
+                    return sendOsaCommand(set_output_6_off_cmd);
+                }
             }
-        } else if (Output4SP.isNameMatch(name)) {
-            auto previous = Output4SP.findOnSwitchIndex();
-            Output4SP.update(states, names, n);
-            auto requested = Output4SP.findOnSwitchIndex();
-            if (requested < 0)
-                return true;
-            if (previous == requested) {
-                Output4SP.reset();
-                Output4SP.setState(IPS_OK);
-                Output4SP[previous].setState(ISS_ON);
-                Output4SP.apply();
-                return true;
+            IDSetSwitch(&Output6SP, nullptr);
+            return false;
+        } else if (strcmp(Output7SP.name, name) == 0) {
+            IUUpdateSwitch(&Output7SP, states, names, n);
+            for (int i = 0; i < n; i++) {
+                if (strcmp(names[i], "OUTPUT7_ON") == 0) {
+                    char set_output_7_on_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_7_on_cmd, "%s7,V1%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output7SP, nullptr);
+                    return sendOsaCommand(set_output_7_on_cmd);
+                } else if (strcmp(names[i], "OUTPUT7_OFF") == 0) {
+                    char set_output_7_off_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_7_off_cmd, "%s7,V0%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output7SP, nullptr);
+                    return sendOsaCommand(set_output_7_off_cmd);
+                }
             }
-            if (requested == 0) {
-                Output4SP.setState(IPS_OK);
-                Output4SP[requested].s = ISS_ON;
-                Output4SP.apply();
-                char set_output_4_on_cmd[CMD_MAX_LEN];
-                sprintf(set_output_4_on_cmd, "%s1,V1%s", Osa_setFeaturePart, Osa_command_terminator);
-                return sendOsaCommand(set_output_4_on_cmd);
-            } else {
-                Output4SP.setState(IPS_IDLE);
-                Output4SP[requested].s = ISS_OFF;
-                Output4SP.apply();
-                char set_output_4_off_cmd[CMD_MAX_LEN];
-                sprintf(set_output_4_off_cmd, "%s1,V0%s", Osa_setFeaturePart, Osa_command_terminator);
-                return sendOsaCommand(set_output_4_off_cmd);
+            IDSetSwitch(&Output7SP, nullptr);
+            return false;
+        } else if (strcmp(Output8SP.name, name) == 0) {
+            IUUpdateSwitch(&Output8SP, states, names, n);
+            for (int i = 0; i < n; i++) {
+                if (strcmp(names[i], "OUTPUT8_ON") == 0) {
+                    char set_output_8_on_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_8_on_cmd, "%s8,V1%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output8SP, nullptr);
+                    return sendOsaCommand(set_output_8_on_cmd);
+                } else if (strcmp(names[i], "OUTPUT8_OFF") == 0) {
+                    char set_output_8_off_cmd[CMD_MAX_LEN];
+                    sprintf(set_output_8_off_cmd, "%s8,V0%s", Osa_setFeaturePart, Osa_command_terminator);
+                    IDSetSwitch(&Output8SP, nullptr);
+                    return sendOsaCommand(set_output_8_off_cmd);
+                }
             }
-        } else if (Output5SP.isNameMatch(name)) {
-            auto previous = Output5SP.findOnSwitchIndex();
-            Output5SP.update(states, names, n);
-            auto requested = Output5SP.findOnSwitchIndex();
-            if (requested < 0)
-                return true;
-            if (previous == requested) {
-                Output5SP.reset();
-                Output5SP.setState(IPS_OK);
-                Output5SP[previous].setState(ISS_ON);
-                Output5SP.apply();
-                return true;
-            }
-            if (requested == 0) {
-                Output5SP.setState(IPS_OK);
-                Output5SP[requested].s = ISS_ON;
-                Output5SP.apply();
-                char set_output_5_on_cmd[CMD_MAX_LEN];
-                sprintf(set_output_5_on_cmd, "%s1,V1%s", Osa_setFeaturePart, Osa_command_terminator);
-                return sendOsaCommand(set_output_5_on_cmd);
-            } else {
-                Output5SP.setState(IPS_IDLE);
-                Output5SP[requested].s = ISS_OFF;
-                Output5SP.apply();
-                char set_output_5_off_cmd[CMD_MAX_LEN];
-                sprintf(set_output_5_off_cmd, "%s1,V0%s", Osa_setFeaturePart, Osa_command_terminator);
-                return sendOsaCommand(set_output_5_off_cmd);
-            }
-        } else if (Output6SP.isNameMatch(name)) {
-            auto previous = Output6SP.findOnSwitchIndex();
-            Output6SP.update(states, names, n);
-            auto requested = Output6SP.findOnSwitchIndex();
-            if (requested < 0)
-                return true;
-            if (previous == requested) {
-                Output6SP.reset();
-                Output6SP.setState(IPS_OK);
-                Output6SP[previous].setState(ISS_ON);
-                Output6SP.apply();
-                return true;
-            }
-            if (requested == 0) {
-                Output6SP.setState(IPS_OK);
-                Output6SP[requested].s = ISS_ON;
-                Output6SP.apply();
-                char set_output_6_on_cmd[CMD_MAX_LEN];
-                sprintf(set_output_6_on_cmd, "%s1,V1%s", Osa_setFeaturePart, Osa_command_terminator);
-                return sendOsaCommand(set_output_6_on_cmd);
-            } else {
-                Output6SP.setState(IPS_IDLE);
-                Output6SP[requested].s = ISS_OFF;
-                Output6SP.apply();
-                char set_output_6_off_cmd[CMD_MAX_LEN];
-                sprintf(set_output_6_off_cmd, "%s1,V0%s", Osa_setFeaturePart, Osa_command_terminator);
-                return sendOsaCommand(set_output_6_off_cmd);
-            }
-        } else if (Output7SP.isNameMatch(name)) {
-            auto previous = Output7SP.findOnSwitchIndex();
-            Output7SP.update(states, names, n);
-            auto requested = Output7SP.findOnSwitchIndex();
-            if (requested < 0)
-                return true;
-            if (previous == requested) {
-                Output7SP.reset();
-                Output7SP.setState(IPS_OK);
-                Output7SP[previous].setState(ISS_ON);
-                Output7SP.apply();
-                return true;
-            }
-            if (requested == 0) {
-                Output7SP.setState(IPS_OK);
-                Output7SP[requested].s = ISS_ON;
-                Output7SP.apply();
-                char set_output_7_on_cmd[CMD_MAX_LEN];
-                sprintf(set_output_7_on_cmd, "%s1,V1%s", Osa_setFeaturePart, Osa_command_terminator);
-                return sendOsaCommand(set_output_7_on_cmd);
-            } else {
-                Output7SP.setState(IPS_IDLE);
-                Output7SP[requested].s = ISS_OFF;
-                Output7SP.apply();
-                char set_output_7_off_cmd[CMD_MAX_LEN];
-                sprintf(set_output_7_off_cmd, "%s1,V0%s", Osa_setFeaturePart, Osa_command_terminator);
-                return sendOsaCommand(set_output_7_off_cmd);
-            }
-        } else if (Output8SP.isNameMatch(name)) {
-            auto previous = Output8SP.findOnSwitchIndex();
-            Output8SP.update(states, names, n);
-            auto requested = Output8SP.findOnSwitchIndex();
-            if (requested < 0)
-                return true;
-            if (previous == requested) {
-                Output8SP.reset();
-                Output8SP.setState(IPS_OK);
-                Output8SP[previous].setState(ISS_ON);
-                Output8SP.apply();
-                return true;
-            }
-            if (requested == 0) {
-                Output8SP.setState(IPS_OK);
-                Output8SP[requested].s = ISS_ON;
-                Output8SP.apply();
-                char set_output_8_on_cmd[CMD_MAX_LEN];
-                sprintf(set_output_8_on_cmd, "%s1,V1%s", Osa_setFeaturePart, Osa_command_terminator);
-                return sendOsaCommand(set_output_8_on_cmd);
-            } else {
-                Output8SP.setState(IPS_IDLE);
-                Output8SP[requested].s = ISS_OFF;
-                Output8SP.apply();
-                char set_output_8_off_cmd[CMD_MAX_LEN];
-                sprintf(set_output_8_off_cmd, "%s1,V0%s", Osa_setFeaturePart, Osa_command_terminator);
-                return sendOsaCommand(set_output_8_off_cmd);
-            }
-        } else
+            IDSetSwitch(&Output8SP, nullptr);
+            return false;
+        }
 
         return INDI::DefaultDevice::ISNewSwitch(dev, name, states, names, n);
     } else {

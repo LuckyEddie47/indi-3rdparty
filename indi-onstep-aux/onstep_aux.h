@@ -156,22 +156,38 @@ class onstepAux : public INDI::DefaultDevice
         char OUTPUT7_NAME[RB_MAX_LEN];
         char OUTPUT8_NAME[RB_MAX_LEN];
 
-        INDI::PropertySwitch Output1SP {2};
-        enum {OUTPUT1_ON, OUTPUT1_OFF};
-        INDI::PropertySwitch Output2SP {2};
-        enum {OUTPUT2_ON, OUTPUT2_OFF};
-        INDI::PropertySwitch Output3SP {2};
-        enum {OUTPUT3_ON, OUTPUT3_OFF};
-        INDI::PropertySwitch Output4SP {2};
-        enum {OUTPUT4_ON, OUTPUT4_OFF};
-        INDI::PropertySwitch Output5SP {2};
-        enum {OUTPUT5_ON, OUTPUT5_OFF};
-        INDI::PropertySwitch Output6SP {2};
-        enum {OUTPUT6_ON, OUTPUT6_OFF};
-        INDI::PropertySwitch Output7SP {2};
-        enum {OUTPUT7_ON, OUTPUT7_OFF};
-        INDI::PropertySwitch Output8SP {2};
-        enum {OUTPUT8_ON, OUTPUT8_OFF};
+        ISwitchVectorProperty Output1SP;
+        ISwitch Output1S[SWITCH_TOGGLE_COUNT];
+        ISwitchVectorProperty Output2SP;
+        ISwitch Output2S[SWITCH_TOGGLE_COUNT];
+        ISwitchVectorProperty Output3SP;
+        ISwitch Output3S[SWITCH_TOGGLE_COUNT];
+        ISwitchVectorProperty Output4SP;
+        ISwitch Output4S[SWITCH_TOGGLE_COUNT];
+        ISwitchVectorProperty Output5SP;
+        ISwitch Output5S[SWITCH_TOGGLE_COUNT];
+        ISwitchVectorProperty Output6SP;
+        ISwitch Output6S[SWITCH_TOGGLE_COUNT];
+        ISwitchVectorProperty Output7SP;
+        ISwitch Output7S[SWITCH_TOGGLE_COUNT];
+        ISwitchVectorProperty Output8SP;
+        ISwitch Output8S[SWITCH_TOGGLE_COUNT];
+        ITextVectorProperty Output_Name1TP;
+        IText Output_Name1T[1] {};
+        ITextVectorProperty Output_Name2TP;
+        IText Output_Name2T[1] {};
+        ITextVectorProperty Output_Name3TP;
+        IText Output_Name3T[1] {};
+        ITextVectorProperty Output_Name4TP;
+        IText Output_Name4T[1] {};
+        ITextVectorProperty Output_Name5TP;
+        IText Output_Name5T[1] {};
+        ITextVectorProperty Output_Name6TP;
+        IText Output_Name6T[1] {};
+        ITextVectorProperty Output_Name7TP;
+        IText Output_Name7T[1] {};
+        ITextVectorProperty Output_Name8TP;
+        IText Output_Name8T[1] {};
 
         // Manual tab controls
         //--------------------
