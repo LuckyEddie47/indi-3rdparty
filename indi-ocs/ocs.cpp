@@ -65,7 +65,7 @@ OCS::OCS() : INDI::Dome(), WI(this)
     // kill(getpid(), SIGSTOP);
     // Debug only end
 
-    setVersion(1, 1);
+    setVersion(1, 3);
     SetDomeCapability(DOME_CAN_ABORT | DOME_HAS_SHUTTER);
     SlowTimer.callOnTimeout(std::bind(&OCS::SlowTimerHit, this));
 }
@@ -1403,7 +1403,7 @@ void OCS::SlowTimerHit()
 IPState OCS::updateWeather() {
     if (weather_tab_enabled) {
 
-        LOG_DEBUG("Weathe update called");
+        LOG_DEBUG("Weather update called");
 
         for (int measurement = 0; measurement < WEATHER_MEASUREMENTS_COUNT; measurement ++) {
             if (weather_enabled[measurement] == 1) {
@@ -1527,9 +1527,14 @@ IPState OCS::ControlShutter(ShutterOperation operation)
         sendOCSCommandBlind(OCS_roof_open);
     }
     else if (operation == SHUTTER_CLOSE) {
-        // Sending roof/shutter commands clears any OCS roof errors so we need to do the same here
-        indi_strlcpy(last_shutter_error, "", RB_MAX_LEN);
-        sendOCSCommandBlind(OCS_roof_close);
+        if (INDI::Dome::isLocked()) {
+            LOG_WARN("Cannot close shutter, Dome is locked by unparked mount");
+            return IPS_ALERT;
+        } else {
+            // Sending roof/shutter commands clears any OCS roof errors so we need to do the same here
+            indi_strlcpy(last_shutter_error, "", RB_MAX_LEN);
+            sendOCSCommandBlind(OCS_roof_close);
+        }
     }
 
     // We have to delay the polling timer to account for the delays built
@@ -1551,8 +1556,14 @@ IPState OCS::ControlShutter(ShutterOperation operation)
  * **********************************/
 IPState OCS::Park()
 {
+    if (HasShutter() && ShutterParkPolicySP[SHUTTER_CLOSE_ON_PARK].getState() == ISS_ON)
+    {
+        LOG_INFO("Closing shutter on parking...");
+        ControlShutter(ShutterOperation::SHUTTER_CLOSE);
+    }
     if (sendOCSCommand(OCS_dome_park)) {
         setDomeState(DOME_PARKING);
+        SetParked(true);
         return IPS_BUSY;
     } else {
         setDomeState(DOME_ERROR);
@@ -1567,6 +1578,13 @@ IPState OCS::UnPark()
 {
     if (sendOCSCommand(OCS_restore_dome_park)) {
         setDomeState(DOME_UNPARKING);
+        if (HasShutter() && ShutterParkPolicySP[SHUTTER_OPEN_ON_UNPARK].getState() == ISS_ON)
+        {
+            LOG_INFO("Opening shutter on unparking...");
+            ControlShutter(ShutterOperation::SHUTTER_OPEN);
+        }
+        setDomeState(DOME_UNPARKED);
+        SetParked(false);
         return IPS_OK;
     } else {
         setDomeState(DOME_ERROR);
@@ -2208,7 +2226,7 @@ bool OCS::sendOCSCommand(const char *cmd)
         return false;
     }
 
-    return (response[0] == '0'); //OCS uses 0 for success and non zero for failure, in *most* cases;
+    return (response[0] == '1'); //OCS uses 1 for success and non zero for failure, in *most* cases;
 }
 
 /************************************************************

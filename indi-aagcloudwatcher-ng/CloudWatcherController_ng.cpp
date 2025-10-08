@@ -34,6 +34,7 @@
 #include <fstream>
 #include <iostream>
 #include <regex>
+#include <vector>
 
 #include <limits.h>
 
@@ -934,7 +935,7 @@ bool CloudWatcherController::getWindSpeed(float &windSpeed) // CW Get Wind Speed
 
         float speed = ispeed;
 
-        LOGF_DEBUG( "raw wind speed is %i for anemometer type %s", speed, (anemometerType == BLACK ? "black" : "grey"));
+        LOGF_DEBUG( "raw wind speed is %i for anemometer type %s", ispeed, (anemometerType == BLACK ? "black" : "grey"));
 
         switch (anemometerType)
         {
@@ -956,7 +957,7 @@ bool CloudWatcherController::getWindSpeed(float &windSpeed) // CW Get Wind Speed
     {
         windSpeed = 0;
     }
-    LOGF_DEBUG( "processed wind speed is %i for anemometer type %s", windSpeed, (anemometerType == BLACK ? "black" : "grey"));
+    LOGF_DEBUG( "processed wind speed is %f for anemometer type %s", windSpeed, (anemometerType == BLACK ? "black" : "grey"));
 
     return true;
 }
@@ -1198,14 +1199,14 @@ float CloudWatcherController::aggregateFloats(float values[], int numberOfValues
 
 int CloudWatcherController::aggregateInts(int values[], int numberOfValues)
 {
-    float newValues[numberOfValues];
+    std::vector<float> newValues(numberOfValues);
 
     for (int i = 0; i < numberOfValues; i++)
     {
         newValues[i] = (float)values[i];
     }
 
-    return (int)aggregateFloats(newValues, numberOfValues);
+    return (int)aggregateFloats(newValues.data(), numberOfValues);
 }
 
 void CloudWatcherController::trimString(char *str)
