@@ -20,8 +20,8 @@
 */
 
 #include "onstep_aux.h"
-//#include "connectionplugins/connectiontcp.h"
-//#include "connectionplugins/connectionserial.h"
+#include "connectionplugins/connectiontcp.h"
+#include "connectionplugins/connectionserial.h"
 #include "connectionplugins/connectioninterface.h"
 #include "indicom.h"
 
@@ -50,7 +50,7 @@ std::unique_ptr<OnStep_Aux> OnStepAux(new OnStep_Aux());
 // Mutex for communications
 std::mutex osaCommsLock;
 
-OnStep_Aux::OnStep_Aux() : WI(this), RotatorInterface(this)
+OnStep_Aux::OnStep_Aux() : FI(this),  RI(this), WI(this)
 {
     // Debug only
     // Halts the process at this point. Allows remote debugger to attach which is required
@@ -85,17 +85,19 @@ bool OnStep_Aux::Handshake()
 {
     bool handshake_status = false;
 
-    if (PortFD > 0) {
+//    if (PortFD > 0) {
         Connection::Interface *activeConnection = getActiveConnection();
         if (!activeConnection->name().compare("CONNECTION_TCP")) {
             LOG_INFO("Network based connection, detection timeouts set to 1 second");
             OSTimeoutMicroSeconds = 0;
             OSTimeoutSeconds = 1;
+            PortFD = tcpConnection->getPortFD();
         }
         else {
             LOG_INFO("Non-Network based connection, detection timeouts set to 0.1 seconds");
             OSTimeoutMicroSeconds = 100000;
             OSTimeoutSeconds = 0;
+            PortFD = serialConnection->getPortFD();
         }
 
         char handshake_response[RB_MAX_LEN] = {0};
@@ -111,10 +113,10 @@ bool OnStep_Aux::Handshake()
         else {
             LOGF_DEBUG("OnStep Aux handshake error, reponse was: %s", handshake_response);
         }
-    }
-    else {
-        LOG_ERROR("OnStep Aux can't handshake, device not connected");
-    }
+//    }
+//    else {
+//        LOG_ERROR("OnStep Aux can't handshake, device not connected");
+//    }
 
     return handshake_status;
 }
@@ -1170,7 +1172,7 @@ bool OnStep_Aux::SetRotatorBacklashEnabled(bool enabled)
 ************************************************************/
 bool OnStep_Aux::Connect()
 {
-    bool status = INDI::Focuser::Connect();
+    bool status = INDI::DefaultDevice::Connect();
     return status;
 }
 
@@ -1179,7 +1181,7 @@ bool OnStep_Aux::Connect()
 ************************************************************/
 bool OnStep_Aux::Disconnect()
 {
-    bool status = INDI::Focuser::Disconnect();
+    bool status = INDI::DefaultDevice::Disconnect();
     return status;
 }
 
@@ -1188,14 +1190,14 @@ bool OnStep_Aux::Disconnect()
 //******************/
 void ISPoll(void *p);
 
-void OnStep_Aux::ISGetProperties(const char *dev)
-{
-    INDI::Focuser::ISGetProperties(dev);
-}
+//void OnStep_Aux::ISGetProperties(const char *dev)
+//{
+//    FI::ISGetProperties(dev);
+//}
 
 bool OnStep_Aux::saveConfigItems(FILE *fp)
 {
-    INDI::Focuser::saveConfigItems(fp);
+    FI::saveConfigItems(fp);
     WI::saveConfigItems(fp);
     RI::saveConfigItems(fp);
     return true;

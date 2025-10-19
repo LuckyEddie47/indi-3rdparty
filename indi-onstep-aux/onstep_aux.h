@@ -190,7 +190,7 @@ An unterminated 0 is returned from unconfigured items
 OnStep lexicon end
 *****************/
 
-class OnStep_Aux : public INDI::Focuser, public INDI::WeatherInterface, public INDI::RotatorInterface
+class OnStep_Aux : public INDI::DefaultDevice, public INDI::FocuserInterface, public INDI::RotatorInterface, public INDI::WeatherInterface
 {
   public:
     OnStep_Aux();
@@ -198,12 +198,12 @@ class OnStep_Aux : public INDI::Focuser, public INDI::WeatherInterface, public I
 
     virtual const char *getDefaultName() override;
     virtual bool initProperties() override;
-    virtual void ISGetProperties(const char *dev) override;
+//    virtual void ISGetProperties(const char *dev) override;
     virtual bool updateProperties() override;
     virtual bool ISNewNumber(const char *dev, const char *name, double values[], char *names[], int n) override;
     virtual bool ISNewSwitch(const char *dev, const char *name, ISState *states, char *names[], int n) override;
     virtual bool ISNewText(const char *dev,const char *name,char *texts[],char *names[],int n) override;
-    virtual bool Handshake() override;
+    virtual bool Handshake();
 
   protected:
     bool Connect() override;
@@ -238,6 +238,12 @@ class OnStep_Aux : public INDI::Focuser, public INDI::WeatherInterface, public I
   private:
     float minimum_OS_fw = 10.25;
     int conversion_error = -10000;
+
+    // For Serial and TCP connections
+    int PortFD = -1;
+
+    Connection::Serial * serialConnection{nullptr};
+    Connection::TCP * tcpConnection{nullptr};
 
     // Capability queries on connection
     void GetCapabilites();
