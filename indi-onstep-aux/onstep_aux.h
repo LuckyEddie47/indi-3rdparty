@@ -80,6 +80,53 @@ An unterminated 0 is returned from unconfigured items
 #define OS_get_defined_focusers_part ":FA"
 // Returns: 1-6 if defined, or 0 if undefined
 
+// Move focuser relative
+#define OS_move_focuser_rel_part ":FR"
+// Returns: nothing
+
+// Move focuser absolute
+#define OS_move_focuser_abs_part ":FS"
+// Returns: 1 on sucess, 0 on failure
+
+// Stop the focuser
+#define OS_stop_focuser ":FQ#"
+// Returns: nothing
+
+// Get the focuser current position
+#define OS_get_focuser_position ":FG#"
+// Returns: n
+
+// Get the foxuser status
+#define OS_get_focuser_status ":FT#"
+// Returns: M# for Moving, S# for Stopped
+
+// Get the focuser min position (full in)
+#define OS_get_focuser_min ":FI#"
+// Returns: n# (microns)
+
+// Get the focuser max position (full out)
+#define OS_get_focuser_max ":FM#"
+// Returns: n# (microns)
+
+// Get the focuser temperature
+#define OS_get_focuser_temperature ":Ft#"
+// Returns: n# (deg C)
+
+// Get focuser differential temperature
+#define OS_get_focuser_diff_temperature ":Fe#"
+// Returns: n# (deg C)
+
+// Get focuser temp compr coefficient
+#define OS_get_focuser_temp_comp_coef ":FC#"
+// Returns: n.n# (microns per deg C)
+
+// Get focuser temp comp deadband
+#define OS_get_focuser_deadband ":FD#"
+// Returns: n#
+
+// Get focuser temp comp enabled
+#define OS_get_focuser_temp_comp_en ":Fc#"
+
 // Rotator commands
 //-----------------
 
@@ -95,7 +142,7 @@ An unterminated 0 is returned from unconfigured items
 #define OS_get_rotator_min ":rI#"
 // Returns: n.n#
 
-// Get rotator min angle
+// Get rotator max angle
 #define OS_get_rotator_max ":rM#"
 // Returns: n.n#
 
@@ -139,9 +186,9 @@ An unterminated 0 is returned from unconfigured items
 //-----------------------------------
 #define OS_command_terminator "#"
 
-/*********************
-OnStep OCS lexicon end
-**********************/
+/*****************
+OnStep lexicon end
+*****************/
 
 class OnStep_Aux : public INDI::Focuser, public INDI::WeatherInterface, public INDI::RotatorInterface
 {
@@ -210,9 +257,9 @@ class OnStep_Aux : public INDI::Focuser, public INDI::WeatherInterface, public I
 
     //FocuserInterface
 
-//    IPState MoveFocuser(FocusDirection dir, int speed, uint16_t duration) override;
-//    IPState MoveAbsFocuser (uint32_t targetTicks) override;
-//    IPState MoveRelFocuser (FocusDirection dir, uint32_t ticks) override;
+    IPState MoveFocuser(FocusDirection dir, int speed, uint16_t duration) override;
+    IPState MoveAbsFocuser (uint32_t targetTicks) override;
+    IPState MoveRelFocuser (FocusDirection dir, uint32_t ticks) override;
     bool AbortFocuser () override;
     int MAX_FOCUSERS = 6;
 
@@ -240,8 +287,6 @@ class OnStep_Aux : public INDI::Focuser, public INDI::WeatherInterface, public I
     ITextVectorProperty VersionTP;
     IText VersionT[5] {};
 
- //   OnStepVersion OnStepMountVersion = OSV_UNKNOWN;
-
     // OnStep Status controls
     ITextVectorProperty OnstepStatTP;
     IText OnstepStat[11] {};
@@ -251,7 +296,7 @@ class OnStep_Aux : public INDI::Focuser, public INDI::WeatherInterface, public I
 
     // Focuser controls
     // Focuser 1
-    bool OSFocuser1 = false;
+//    bool OSFocuser1 = false;
     ISwitchVectorProperty OSFocus1InitializeSP;
     ISwitch OSFocus1InitializeS[4];
 
@@ -267,22 +312,22 @@ class OnStep_Aux : public INDI::Focuser, public INDI::WeatherInterface, public I
     INumber TFCDeadbandN[1];
     // End Focus T° Compensation
 
-    int OSNumFocusers = 0;
+//    int OSNumFocusers = 0;
     ISwitchVectorProperty OSFocusSelectSP;
     ISwitch OSFocusSelectS[9];
 
     // Focuser 2
     //ISwitchVectorProperty OSFocus2SelSP;
     //ISwitch OSFocus2SelS[2];
-    bool OSFocuser2 = false;
-    ISwitchVectorProperty OSFocus2RateSP;
-    ISwitch OSFocus2RateS[4];
-
-    ISwitchVectorProperty OSFocus2MotionSP;
-    ISwitch OSFocus2MotionS[3];
-
-    INumberVectorProperty OSFocus2TargNP;
-    INumber OSFocus2TargN[1];
+//    bool OSFocuser2 = false;
+//    ISwitchVectorProperty OSFocus2RateSP;
+//    ISwitch OSFocus2RateS[4];
+//
+//    ISwitchVectorProperty OSFocus2MotionSP;
+//    ISwitch OSFocus2MotionS[3];
+//
+//    INumberVectorProperty OSFocus2TargNP;
+//    INumber OSFocus2TargN[1];
 
     //Rotator - Some handled by RotatorInterface, but that's mostly for rotation only, absolute, and... very limited.
     bool OSRotator1 = false; //Change to false after detection code

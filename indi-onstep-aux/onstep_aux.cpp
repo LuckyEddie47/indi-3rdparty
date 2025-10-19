@@ -274,14 +274,14 @@ bool OnStep_Aux::initProperties()
 
     //FocuserInterface
     //Initial, these will be updated later.
-    FocusRelPosN[0].min = 0.;
-    FocusRelPosN[0].max = 30000.;
-    FocusRelPosN[0].value = 0;
-    FocusRelPosN[0].step = 10;
-    FocusAbsPosN[0].min = 0.;
-    FocusAbsPosN[0].max = 60000.;
-    FocusAbsPosN[0].value = 0;
-    FocusAbsPosN[0].step = 10;
+    FocusRelPosNP[0].min = 0.;
+    FocusRelPosNP[0].max = 30000.;
+    FocusRelPosNP[0].value = 0;
+    FocusRelPosNP[0].step = 10;
+    FocusAbsPosNP[0].min = 0.;
+    FocusAbsPosNP[0].max = 60000.;
+    FocusAbsPosNP[0].value = 0;
+    FocusAbsPosNP[0].step = 10;
 
     // ============== MAIN_CONTROL_TAB
     IUFillSwitch(&ReticS[0], "PLUS", "Light", ISS_OFF);
@@ -349,22 +349,22 @@ bool OnStep_Aux::initProperties()
     //IUFillSwitch(&OSFocus2SelS[1], "Focus2_Sel2", "Foc 2", ISS_OFF);
     //IUFillSwitchVector(&OSFocus2SelSP, OSFocus2SelS, 2, getDeviceName(), "Foc2Sel", "Foc 2", FOCUS_TAB, IP_RW, ISR_ATMOST1, 0, IPS_IDLE);
 
-    IUFillSwitch(&OSFocus2MotionS[0], "Focus2_In", "In", ISS_OFF);
-    IUFillSwitch(&OSFocus2MotionS[1], "Focus2_Out", "Out", ISS_OFF);
-    IUFillSwitch(&OSFocus2MotionS[2], "Focus2_Stop", "Stop", ISS_OFF);
-    IUFillSwitchVector(&OSFocus2MotionSP, OSFocus2MotionS, 3, getDeviceName(), "Foc2Mot", "Foc 2 Motion", FOCUS_TAB, IP_RW,
-                       ISR_ATMOST1, 0, IPS_IDLE);
-
-    IUFillSwitch(&OSFocus2RateS[0], "Focus2_1", "min", ISS_OFF);
-    IUFillSwitch(&OSFocus2RateS[1], "Focus2_2", "0.01", ISS_OFF);
-    IUFillSwitch(&OSFocus2RateS[2], "Focus2_3", "0.1", ISS_OFF);
-    IUFillSwitch(&OSFocus2RateS[3], "Focus2_4", "1", ISS_OFF);
-    IUFillSwitchVector(&OSFocus2RateSP, OSFocus2RateS, 4, getDeviceName(), "Foc2Rate", "Foc 2 Rates", FOCUS_TAB, IP_RW,
-                       ISR_ATMOST1, 0, IPS_IDLE);
-
-    IUFillNumber(&OSFocus2TargN[0], "FocusTarget2", "Abs Pos", "%g", -25000, 25000, 1, 0);
-    IUFillNumberVector(&OSFocus2TargNP, OSFocus2TargN, 1, getDeviceName(), "Foc2Targ", "Foc 2 Target", FOCUS_TAB, IP_RW, 0,
-                       IPS_IDLE);
+//    IUFillSwitch(&OSFocus2MotionS[0], "Focus2_In", "In", ISS_OFF);
+//    IUFillSwitch(&OSFocus2MotionS[1], "Focus2_Out", "Out", ISS_OFF);
+//    IUFillSwitch(&OSFocus2MotionS[2], "Focus2_Stop", "Stop", ISS_OFF);
+//    IUFillSwitchVector(&OSFocus2MotionSP, OSFocus2MotionS, 3, getDeviceName(), "Foc2Mot", "Foc 2 Motion", FOCUS_TAB, IP_RW,
+//                       ISR_ATMOST1, 0, IPS_IDLE);
+//
+//    IUFillSwitch(&OSFocus2RateS[0], "Focus2_1", "min", ISS_OFF);
+//    IUFillSwitch(&OSFocus2RateS[1], "Focus2_2", "0.01", ISS_OFF);
+//    IUFillSwitch(&OSFocus2RateS[2], "Focus2_3", "0.1", ISS_OFF);
+//    IUFillSwitch(&OSFocus2RateS[3], "Focus2_4", "1", ISS_OFF);
+//    IUFillSwitchVector(&OSFocus2RateSP, OSFocus2RateS, 4, getDeviceName(), "Foc2Rate", "Foc 2 Rates", FOCUS_TAB, IP_RW,
+//                       ISR_ATMOST1, 0, IPS_IDLE);
+//
+//    IUFillNumber(&OSFocus2TargN[0], "FocusTarget2", "Abs Pos", "%g", -25000, 25000, 1, 0);
+//    IUFillNumberVector(&OSFocus2TargNP, OSFocus2TargN, 1, getDeviceName(), "Foc2Targ", "Foc 2 Target", FOCUS_TAB, IP_RW, 0,
+//                       IPS_IDLE);
 
     // =========== ROTATOR TAB
 
@@ -836,325 +836,189 @@ bool OnStep_Aux::ISNewText(const char *dev,const char *name,char *texts[],char *
  * Focuser functions
  ******************/
 
-//IPState OnStep_Aux::MoveFocuser(FocusDirection dir, int speed, uint16_t duration)
-//{
-//    INDI_UNUSED(speed);
-//    //  :FRsnnn#  Set focuser target position relative (in microns)
-//    //            Returns: Nothing
-//    double output;
-//    char read_buffer[32];
-//    output = duration;
-//    if (dir == FOCUS_INWARD) output = 0 - output;
-//    snprintf(read_buffer, sizeof(read_buffer), ":FR%5f#", output);
-//    sendOnStepCommandBlind(read_buffer);
-//    return IPS_BUSY; // Normal case, should be set to normal by update.
-//}
-//
-//IPState OnStep_Aux::MoveAbsFocuser (uint32_t targetTicks)
-//{
-//    //  :FSsnnn#  Set focuser target position (in microns)
-//    //            Returns: Nothing
-//    if (FocusAbsPosNP[0].getMax() >= int(targetTicks) && FocusAbsPosNP[0].getMin() <= int(targetTicks))
-//    {
-//        char read_buffer[32];
-//        snprintf(read_buffer, sizeof(read_buffer), ":FS%06d#", int(targetTicks));
-//        sendOnStepCommandBlind(read_buffer);
-//        return IPS_BUSY; // Normal case, should be set to normal by update.
-//    }
-//    else
-//    {
-//        LOG_INFO("Unable to move focuser, out of range");
-//        return IPS_ALERT;
-//    }
-//}
-//
-//IPState OnStep_Aux::MoveRelFocuser (FocusDirection dir, uint32_t ticks)
-//{
-//    //  :FRsnnn#  Set focuser target position relative (in microns)
-//    //            Returns: Nothing
-//    int output;
-//    char read_buffer[32];
-//    output = ticks;
-//    if (dir == FOCUS_INWARD) output = 0 - ticks;
-//    snprintf(read_buffer, sizeof(read_buffer), ":FR%04d#", output);
-//    sendOnStepCommandBlind(read_buffer);
-//    return IPS_BUSY; // Normal case, should be set to normal by update.
-//}
-//
+IPState OnStep_Aux::MoveFocuser(FocusDirection dir, int speed, uint16_t duration)
+{
+    INDI_UNUSED(speed);
+    double output;
+    char cmd[32];
+    output = duration;
+    if (dir == FOCUS_INWARD) output = 0 - output;
+    snprintf(cmd, sizeof(cmd), "%s%5f%s",OS_move_focuser_rel_part, output, OS_command_terminator);
+    sendOSCommandBlind(cmd);
+    return IPS_BUSY; // Normal case, should be set to normal by update.
+}
+
+IPState OnStep_Aux::MoveAbsFocuser (uint32_t targetTicks)
+{
+    if (FocusAbsPosNP[0].getMax() >= int(targetTicks) && FocusAbsPosNP[0].getMin() <= int(targetTicks)) {
+        char cmd[32];
+        char response[RB_MAX_LEN] = {0};
+        snprintf(cmd, sizeof(cmd), "%s%06d%s", OS_move_focuser_abs_part, int(targetTicks), OS_command_terminator);
+        int error_or_fail = getCommandSingleCharResponse(PortFD, response, cmd);
+
+        if (error_or_fail > 1) {
+            return IPS_BUSY; // Normal case, should be set to normal by update.
+        } else {
+            return IPS_ALERT;
+        }
+    } else {
+        LOG_INFO("Unable to move focuser, out of range");
+        return IPS_ALERT;
+    }
+}
+
+IPState OnStep_Aux::MoveRelFocuser (FocusDirection dir, uint32_t ticks)
+{
+    int output;
+    char cmd[32];
+    output = ticks;
+    if (dir == FOCUS_INWARD) output = 0 - ticks;
+    snprintf(cmd, sizeof(cmd), "%s%04d%s", OS_move_focuser_rel_part, output, OS_command_terminator);
+    sendOSCommandBlind(cmd);
+    return IPS_BUSY; // Normal case, should be set to normal by update.
+}
+
 bool OnStep_Aux::AbortFocuser ()
 {
-    //  :FQ#   Stop the focuser
-    //         Returns: Nothing
     char cmd[CMD_MAX_LEN] = {0};
-    strncpy(cmd, ":FQ#", sizeof(cmd));
+    strncpy(cmd, OS_stop_focuser, sizeof(cmd));
     return sendOSCommandBlind(cmd);
 }
-//
-//int OnStep_Aux::OSUpdateFocuser()
-//{
-//
-//    //    double current = 0;
-//    //     int temp_value;
-//    //     int i;
-//    if (OSFocuser1)
-//    {
-//        // Alternate option:
-//        //if (!sendOnStepCommand(":FA#")) {
-//        char value[RB_MAX_LEN] = {0};
-//        int value_int;
-//        int error_or_fail = getCommandIntResponse(PortFD, &value_int, value, ":FG#");
-//        if (error_or_fail > 1)
-//        {
-//            FocusAbsPosNP[0].setValue( value_int);
-//            //         double current = FocusAbsPosNP[0].getValue();
-//            FocusAbsPosNP.apply();
-//            LOGF_DEBUG("Current focuser: %d, %f", value_int, FocusAbsPosNP[0].getValue());
-//        }
-//
-//        //  :FT#  get status
-//        //         Returns: M# (for moving) or S# (for stopped)
-//        char valueStatus[RB_MAX_LEN] = {0};
-//        error_or_fail = getCommandSingleCharErrorOrLongResponse(PortFD, valueStatus, ":FT#");
-//        if (error_or_fail > 0 )
-//        {
-//            if (valueStatus[0] == 'S')
-//            {
-//                FocusRelPosNP.setState(IPS_OK);
-//                FocusRelPosNP.apply();
-//                FocusAbsPosNP.setState(IPS_OK);
-//                FocusAbsPosNP.apply();
-//            }
-//            else if (valueStatus[0] == 'M')
-//            {
-//                FocusRelPosNP.setState(IPS_BUSY);
-//                FocusRelPosNP.apply();
-//                FocusAbsPosNP.setState(IPS_BUSY);
-//                FocusAbsPosNP.apply();
-//            }
-//            else
-//            {
-//                LOG_WARN("Communication :FT# error, check connection.");
-//                //INVALID REPLY
-//                FocusRelPosNP.setState(IPS_ALERT);
-//                FocusRelPosNP.apply();
-//                FocusAbsPosNP.setState(IPS_ALERT);
-//                FocusAbsPosNP.apply();
-//            }
-//        }
-//        else
-//        {
-//            //INVALID REPLY
-//            LOG_WARN("Communication :FT# error, check connection.");
-//            FocusRelPosNP.setState(IPS_ALERT);
-//            FocusRelPosNP.apply();
-//            FocusAbsPosNP.setState(IPS_ALERT);
-//            FocusAbsPosNP.apply();
-//        }
-//
-//        //  :FM#  Get max position (in microns)
-//        //         Returns: n#
-//        char focus_max[RB_MAX_LEN] = {0};
-//        int focus_max_int;
-//        int fm_error = getCommandIntResponse(PortFD, &focus_max_int, focus_max, ":FM#");
-//        if (fm_error > 0)
-//        {
-//            FocusAbsPosNP[0].setMax(focus_max_int);
-//            FocusAbsPosNP.updateMinMax();
-//            FocusAbsPosNP.apply();
-//            LOGF_DEBUG("focus_max: %s, %i, fm_nbchar: %i", focus_max, focus_max_int, fm_error);
-//        }
-//        else
-//        {
-//            LOG_WARN("Communication :FM# error, check connection.");
-//            LOGF_WARN("focus_max: %s, %u, fm_error: %i", focus_max, focus_max[0], fm_error);
-//            flushIO(PortFD); //Unlikely to do anything, but just in case.
-//        }
-//
-//        //  :FI#  Get full in position (in microns)
-//        //         Returns: n#
-//        char focus_min[RB_MAX_LEN] = {0};
-//        int focus_min_int ;
-//        int fi_error = getCommandIntResponse(PortFD, &focus_min_int, focus_min, ":FI#");
-//        if (fi_error > 0)
-//        {
-//            FocusAbsPosNP[0].setMin( focus_min_int);
-//            FocusAbsPosNP.updateMinMax();
-//            FocusAbsPosNP.apply();
-//            LOGF_DEBUG("focus_min: %s, %i fi_nbchar: %i", focus_min, focus_min_int, fi_error);
-//        }
-//        else
-//        {
-//            LOG_WARN("Communication :FI# error, check connection.");
-//            flushIO(PortFD); //Unlikely to do anything, but just in case.
-//        }
-//
-//        //  :Ft#    Get Focuser Temperature
-//        //          Returns: n#
-//        char focus_T[RB_MAX_LEN] = {0};
-//        double focus_T_double ;
-//        int ft_error = getCommandDoubleResponse(PortFD, &focus_T_double, focus_T, ":Ft#");
-//        if (ft_error > 0)
-//        {
-//            FocusTemperatureN[0].value = atof(focus_T);
-//            IDSetNumber(&FocusTemperatureNP, nullptr);
-//            LOGF_DEBUG("focus T°: %s, focus_T_double %i ft_nbcar: %i", focus_T, focus_T_double, ft_error);
-//        }
-//        else
-//        {
-//            LOG_WARN("Communication :Ft# error, check connection.");
-//            LOGF_DEBUG("focus T°: %s, focus_T_double %i ft_nbcar: %i", focus_T, focus_T_double, ft_error);
-//            flushIO(PortFD); //Unlikely to do anything, but just in case.
-//        }
-//
-//        //  :Fe#    Get Focus Differential T°
-//        //          Returns: n#
-//        char focus_TD[RB_MAX_LEN] = {0};
-//        int focus_TD_int ;
-//        int fe_error = getCommandIntResponse(PortFD, &focus_TD_int, focus_TD, ":Fe#");
-//        if (fe_error > 0)
-//        {
-//            FocusTemperatureN[1].value =  atof(focus_TD);
-//            IDSetNumber(&FocusTemperatureNP, nullptr);
-//            LOGF_DEBUG("focus Differential T°: %s, %i fi_nbchar: %i", focus_TD, focus_TD_int, fe_error);
-//        }
-//        else
-//        {
-//            LOG_WARN("Communication :Fe# error, check connection.");
-//            flushIO(PortFD); //Unlikely to do anything, but just in case.
-//        }
-//
-//        // :FC#       Get focuser temperature compensation coefficient in microns per °C)
-//        //            Return: n.n#
-//        char focus_Coeficient[RB_MAX_LEN] = {0};
-//        int focus_Coefficient_int ;
-//        int fC_error = getCommandIntResponse(PortFD, &focus_Coefficient_int, focus_Coeficient, ":FC#");
-//        if (fC_error > 0)
-//        {
-//            TFCCoefficientN[0].value =  atof(focus_Coeficient);
-//            IDSetNumber(&TFCCoefficientNP, nullptr);
-//            LOGF_DEBUG("TFC Coefficient: %s, %i fC_nbchar: %i", focus_Coeficient, focus_Coefficient_int, fC_error);
-//        }
-//        else
-//        {
-//            LOG_WARN("Communication :FC# error, check connection.");
-//            flushIO(PortFD); //Unlikely to do anything, but just in case.
-//        }
-//
-//        // :FD#       Get focuser temperature compensation deadband amount (in steps or microns)
-//        //            Return: n#
-//        char focus_Deadband[RB_MAX_LEN] = {0};
-//        int focus_Deadband_int ;
-//        int fD_error = getCommandIntResponse(PortFD, &focus_Deadband_int, focus_Deadband, ":FD#");
-//        if (fD_error > 0)
-//        {
-//            TFCDeadbandN[0].value =  focus_Deadband_int;
-//            IDSetNumber(&TFCDeadbandNP, nullptr);
-//            LOGF_DEBUG("TFC Deadband: %s, %i fD_nbchar: %i", focus_Deadband, focus_Deadband_int, fD_error);
-//        }
-//        else
-//        {
-//            LOG_WARN("Communication :FD# error, check connection.");
-//            flushIO(PortFD); //Unlikely to do anything, but just in case.
-//        }
-//
-//        // :FC#       Get focuser temperature compensation coefficient in microns per °C)
-//        //            Return: n.n#
-//        char response[RB_MAX_LEN];
-//        int res = getCommandSingleCharResponse(PortFD, response, ":Fc#");
-//        if (res > 0)
-//        {
-//            if (strcmp(response, "0"))
-//            {
-//                TFCCompensationSP.s = IPS_OK;
-//                TFCCompensationS[0].s = ISS_OFF;
-//                TFCCompensationS[1].s = ISS_ON;
-//            }
-//            else if (strcmp(response, "1"))
-//            {
-//                TFCCompensationSP.s = IPS_OK;
-//                TFCCompensationS[0].s = ISS_ON;
-//                TFCCompensationS[1].s = ISS_OFF;
-//            }
-//            IDSetSwitch(&TFCCompensationSP, nullptr);
-//            LOGF_DEBUG("TFC Enable: fc_nbchar:%d Fc_response: %s", res, response);
-//        }
-//        else
-//        {
-//            //LOGF_DEBUG("TFC Enable1: fc_error:%i Fc_response: %s", res, response);
-//            LOG_WARN("Communication :Fc# error, check connection.");
-//            flushIO(PortFD); //Unlikely to do anything, but just in case.
-//        }
-//
-//        FI::updateProperties();
-//        LOGF_DEBUG("After update properties: FocusAbsPosN min: %f max: %f", FocusAbsPosNP[0].getMin(), FocusAbsPosNP[0].getMax());
-//    }
-//
-//    if(OSFocuser2)
-//    {
-//        char value[RB_MAX_LEN] = {0};
-//        int error_return;
-//        //TODO: Check to see if getCommandIntResponse would be better
-//        error_return = getCommandSingleCharErrorOrLongResponse(PortFD, value, ":fG#");
-//        if (error_return >= 0)
-//        {
-//            if ( strcmp(value, "0") )
-//            {
-//                LOG_INFO("Focuser 2 called, but not present, disabling polling");
-//                LOGF_DEBUG("OSFocuser2: %d, OSNumFocusers: %i", OSFocuser2, OSNumFocusers);
-//                OSFocuser2 = false;
-//            }
-//            else
-//            {
-//                OSFocus2TargNP.np[0].value = atoi(value);
-//                IDSetNumber(&OSFocus2TargNP, nullptr);
-//            }
-//        }
-//        else
-//        {
-//            LOGF_INFO("Focuser 2 called, but returned error %i on read, disabling further polling", error_return);
-//            LOGF_DEBUG("OSFocuser2: %d, OSNumFocusers: %i", OSFocuser2, OSNumFocusers);
-//            OSFocuser2 = false;
-//        }
-//    }
-//
-//    if(OSNumFocusers > 1)
-//    {
-//        char value[RB_MAX_LEN] = {0};
-//        int error_or_fail = getCommandSingleCharResponse(PortFD, value, ":Fa#"); //0 = failure, 1 = success, no # on reply
-//        if (error_or_fail > 0 && value[0] > '0' && value[0] < '9')
-//        {
-//            int temp_value = (unsigned int)(value[0]) - '0';
-//            LOGF_DEBUG(":Fa# return: %d", temp_value);
-//            for (int i = 0; i < 9; i++)
-//            {
-//                OSFocusSelectS[i].s = ISS_OFF;
-//            }
-//            if (temp_value == 0)
-//            {
-//                OSFocusSelectS[1].s = ISS_ON;
-//            }
-//            else if (temp_value > 9 || temp_value < 0) //TODO: Check if completely redundant
-//            {
-//                //To solve issue mentioned https://www.indilib.org/forum/development/1406-driver-onstep-lx200-like-for-indi.html?start=624#71572
-//                OSFocusSelectSP.s = IPS_ALERT;
-//                LOGF_WARN("Active focuser returned out of range: %s, should be 0-9", temp_value);
-//                IDSetSwitch(&OSFocusSelectSP, nullptr);
-//                return 1;
-//            }
-//            else
-//            {
-//                OSFocusSelectS[temp_value - 1].s = ISS_ON;
-//            }
-//            OSFocusSelectSP.s = IPS_OK;
-//            IDSetSwitch(&OSFocusSelectSP, nullptr);
-//        }
-//        else
-//        {
-//            LOGF_DEBUG(":Fa# returned outside values: %c, %u", value[0], value[0]);
-//        }
-//    }
-//    return 0;
-//}
+
+int OnStep_Aux::OSUpdateFocuser()
+{
+    char value[RB_MAX_LEN] = {0};
+    int value_int;
+    int error_or_fail = getCommandIntResponse(PortFD, &value_int, value, OS_get_focuser_position);
+    if (error_or_fail > 1) {
+        FocusAbsPosNP[0].setValue( value_int);
+        //         double current = FocusAbsPosNP[0].getValue();
+        FocusAbsPosNP.apply();
+        LOGF_DEBUG("Current focuser: %d, %f", value_int, FocusAbsPosNP[0].getValue());
+    }
+    char valueStatus[RB_MAX_LEN] = {0};
+    error_or_fail = getCommandSingleCharErrorOrLongResponse(PortFD, valueStatus, OS_get_focuser_status);
+    if (error_or_fail > 0 ) {
+        if (valueStatus[0] == 'S') {
+            FocusRelPosNP.setState(IPS_OK);
+            FocusRelPosNP.apply();
+            FocusAbsPosNP.setState(IPS_OK);
+            FocusAbsPosNP.apply();
+        } else if (valueStatus[0] == 'M') {
+            FocusRelPosNP.setState(IPS_BUSY);
+            FocusRelPosNP.apply();
+            FocusAbsPosNP.setState(IPS_BUSY);
+            FocusAbsPosNP.apply();
+        } else {
+            LOG_WARN("Communication :FT# error, check connection.");
+            //INVALID REPLY
+            FocusRelPosNP.setState(IPS_ALERT);
+            FocusRelPosNP.apply();
+            FocusAbsPosNP.setState(IPS_ALERT);
+            FocusAbsPosNP.apply();
+        }
+    } else {
+        //INVALID REPLY
+        LOG_WARN("Communication :FT# error, check connection.");
+        FocusRelPosNP.setState(IPS_ALERT);
+        FocusRelPosNP.apply();
+        FocusAbsPosNP.setState(IPS_ALERT);
+        FocusAbsPosNP.apply();
+    }
+    char focus_max[RB_MAX_LEN] = {0};
+    int focus_max_int;
+    int fm_error = getCommandIntResponse(PortFD, &focus_max_int, focus_max, OS_get_focuser_max);
+    if (fm_error > 0) {
+        FocusAbsPosNP[0].setMax(focus_max_int);
+        FocusAbsPosNP.updateMinMax();
+        FocusAbsPosNP.apply();
+        LOGF_DEBUG("focus_max: %s, %i, fm_nbchar: %i", focus_max, focus_max_int, fm_error);
+    } else {
+        LOG_WARN("Communication :FM# error, check connection.");
+        LOGF_WARN("focus_max: %s, %u, fm_error: %i", focus_max, focus_max[0], fm_error);
+        flushIO(PortFD); //Unlikely to do anything, but just in case.
+    }
+    char focus_min[RB_MAX_LEN] = {0};
+    int focus_min_int ;
+    int fi_error = getCommandIntResponse(PortFD, &focus_min_int, focus_min, OS_get_focuser_min);
+    if (fi_error > 0) {
+        FocusAbsPosNP[0].setMin( focus_min_int);
+        FocusAbsPosNP.updateMinMax();
+        FocusAbsPosNP.apply();
+        LOGF_DEBUG("focus_min: %s, %i fi_nbchar: %i", focus_min, focus_min_int, fi_error);
+    } else {
+        LOG_WARN("Communication :FI# error, check connection.");
+        flushIO(PortFD); //Unlikely to do anything, but just in case.
+    }
+    char focus_T[RB_MAX_LEN] = {0};
+    double focus_T_double ;
+    int ft_error = getCommandDoubleResponse(PortFD, &focus_T_double, focus_T, OS_get_focuser_temperature);
+    if (ft_error > 0) {
+        FocusTemperatureN[0].value = atof(focus_T);
+        IDSetNumber(&FocusTemperatureNP, nullptr);
+        LOGF_DEBUG("focus T°: %s, focus_T_double %i ft_nbcar: %i", focus_T, focus_T_double, ft_error);
+    } else {
+        LOG_WARN("Communication :Ft# error, check connection.");
+        LOGF_DEBUG("focus T°: %s, focus_T_double %i ft_nbcar: %i", focus_T, focus_T_double, ft_error);
+        flushIO(PortFD); //Unlikely to do anything, but just in case.
+    }
+    char focus_TD[RB_MAX_LEN] = {0};
+    int focus_TD_int ;
+    int fe_error = getCommandIntResponse(PortFD, &focus_TD_int, focus_TD, OS_get_focuser_diff_temperature);
+    if (fe_error > 0) {
+        FocusTemperatureN[1].value =  atof(focus_TD);
+        IDSetNumber(&FocusTemperatureNP, nullptr);
+        LOGF_DEBUG("focus Differential T°: %s, %i fi_nbchar: %i", focus_TD, focus_TD_int, fe_error);
+    } else {
+        LOG_WARN("Communication :Fe# error, check connection.");
+        flushIO(PortFD); //Unlikely to do anything, but just in case.
+    }
+    char focus_Coeficient[RB_MAX_LEN] = {0};
+    int focus_Coefficient_int ;
+    int fC_error = getCommandIntResponse(PortFD, &focus_Coefficient_int, focus_Coeficient, OS_get_focuser_temp_comp_coef);
+    if (fC_error > 0) {
+        TFCCoefficientN[0].value =  atof(focus_Coeficient);
+        IDSetNumber(&TFCCoefficientNP, nullptr);
+        LOGF_DEBUG("TFC Coefficient: %s, %i fC_nbchar: %i", focus_Coeficient, focus_Coefficient_int, fC_error);
+    } else {
+        LOG_WARN("Communication :FC# error, check connection.");
+        flushIO(PortFD); //Unlikely to do anything, but just in case.
+    }
+    char focus_Deadband[RB_MAX_LEN] = {0};
+    int focus_Deadband_int ;
+    int fD_error = getCommandIntResponse(PortFD, &focus_Deadband_int, focus_Deadband, OS_get_focuser_deadband);
+    if (fD_error > 0) {
+        TFCDeadbandN[0].value =  focus_Deadband_int;
+        IDSetNumber(&TFCDeadbandNP, nullptr);
+        LOGF_DEBUG("TFC Deadband: %s, %i fD_nbchar: %i", focus_Deadband, focus_Deadband_int, fD_error);
+    } else {
+        LOG_WARN("Communication :FD# error, check connection.");
+        flushIO(PortFD); //Unlikely to do anything, but just in case.
+    }
+    char response[RB_MAX_LEN];
+    int res = getCommandSingleCharResponse(PortFD, response, OS_get_focuser_temp_comp_en);
+    if (res > 0) {
+        if (strcmp(response, "0")) {
+            TFCCompensationSP.s = IPS_OK;
+            TFCCompensationS[0].s = ISS_OFF;
+            TFCCompensationS[1].s = ISS_ON;
+        } else if (strcmp(response, "1")) {
+            TFCCompensationSP.s = IPS_OK;
+            TFCCompensationS[0].s = ISS_ON;
+            TFCCompensationS[1].s = ISS_OFF;
+        }
+        IDSetSwitch(&TFCCompensationSP, nullptr);
+        LOGF_DEBUG("TFC Enable: fc_nbchar:%d Fc_response: %s", res, response);
+    } else {
+        //LOGF_DEBUG("TFC Enable1: fc_error:%i Fc_response: %s", res, response);
+        LOG_WARN("Communication :Fc# error, check connection.");
+        flushIO(PortFD); //Unlikely to do anything, but just in case.
+    }
+    FI::updateProperties();
+    LOGF_DEBUG("After update properties: FocusAbsPosN min: %f max: %f", FocusAbsPosNP[0].getMin(), FocusAbsPosNP[0].getMax());
+
+    return 0;
+}
 
 /********************
  * Rotator functions
@@ -1333,6 +1197,7 @@ bool OnStep_Aux::saveConfigItems(FILE *fp)
 {
     INDI::Focuser::saveConfigItems(fp);
     WI::saveConfigItems(fp);
+    RI::saveConfigItems(fp);
     return true;
 }
 
