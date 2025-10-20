@@ -83,12 +83,14 @@ bool OnStep_Aux::Handshake()
         OSTimeoutMicroSeconds = 0;
         OSTimeoutSeconds = 1;
         PortFD = tcpConnection->getPortFD();
+        tcpConnection = new Connection::TCP(this);
         registerConnection(tcpConnection);
     } else if (getActiveConnection() == serialConnection) {
         LOG_INFO("Non-Network based connection, detection timeouts set to 0.1 seconds");
         OSTimeoutMicroSeconds = 100000;
         OSTimeoutSeconds = 0;
         PortFD = serialConnection->getPortFD();
+        serialConnection = new Connection::Serial(this);
         registerConnection(serialConnection);
     } else {
         return false;
