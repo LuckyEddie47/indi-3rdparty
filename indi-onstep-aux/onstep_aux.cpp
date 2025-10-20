@@ -76,17 +76,20 @@ bool OnStep_Aux::Handshake()
 {
     bool handshake_status = false;
 
-    Connection::Interface *activeConnection = getActiveConnection();
-    if (!activeConnection->name().compare("CONNECTION_TCP")) {
+    if (getActiveConnection() == tcpConnection) {
+//    Connection::Interface *activeConnection = getActiveConnection();
+//    if (!activeConnection->name().compare("CONNECTION_TCP")) {
         LOG_INFO("Network based connection, detection timeouts set to 1 second");
         OSTimeoutMicroSeconds = 0;
         OSTimeoutSeconds = 1;
         PortFD = tcpConnection->getPortFD();
-    } else {
+    } else if (getActiveConnection() == serialConnection) {
         LOG_INFO("Non-Network based connection, detection timeouts set to 0.1 seconds");
         OSTimeoutMicroSeconds = 100000;
         OSTimeoutSeconds = 0;
         PortFD = serialConnection->getPortFD();
+    } else {
+        return false;
     }
     char handshake_response[RB_MAX_LEN] = {0};
     handshake_status = getCommandSingleCharErrorOrLongResponse(PortFD, handshake_response,
