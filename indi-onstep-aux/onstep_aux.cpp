@@ -32,8 +32,8 @@
 #include <mutex>
 
 // Debug only - required for attaching debugger
-// #include <signal.h>
-// #include <unistd.h>
+//  #include <signal.h>
+//  #include <unistd.h>
 // Debug only end
 
 // Additional tabs
@@ -52,25 +52,16 @@ std::mutex osaCommsLock;
 
 OnStep_Aux::OnStep_Aux() : FI(this),  RI(this), WI(this)
 {
-    // Debug only
-    // Halts the process at this point. Allows remote debugger to attach which is required
-    // when launching the driver from a client eg. Ekos
-    // kill(getpid(), SIGSTOP);
-    // Debug only end
+// Debug only
+// Halts the process at this point. Allows remote debugger to attach which is required
+// when launching the driver from a client eg. Ekos
+//  kill(getpid(), SIGSTOP);
+// Debug only end
 
     setVersion(0, 1);
 
     FI::SetCapability(FOCUSER_CAN_ABS_MOVE | FOCUSER_CAN_REL_MOVE | FOCUSER_CAN_ABORT);
-    // Unused option: FOCUSER_HAS_VARIABLE_SPEED
-
     RI::SetCapability(ROTATOR_CAN_ABORT | ROTATOR_CAN_HOME | ROTATOR_HAS_BACKLASH);
-    //     /*{
-    //         ROTATOR_CAN_ABORT          = 1 << 0, /*!< Can the Rotator abort motion once started? */
-    //         ROTATOR_CAN_HOME           = 1 << 1, /*!< Can the Rotator go to home position? */
-    //         ROTATOR_CAN_SYNC           = 1 << 2, /*!< Can the Rotator sync to specific tick? */ /*Not supported */
-    //         ROTATOR_CAN_REVERSE        = 1 << 3, /*!< Can the Rotator reverse direction? */ //It CAN reverse, but there's no way to query the direction
-    //         ROTATOR_HAS_BACKLASH       = 1 << 4  /*!< Can the Rotatorer compensate for backlash? */
-    //     //}*/
 }
 
 const char *OnStep_Aux::getDefaultName()
@@ -85,38 +76,29 @@ bool OnStep_Aux::Handshake()
 {
     bool handshake_status = false;
 
-//    if (PortFD > 0) {
-        Connection::Interface *activeConnection = getActiveConnection();
-        if (!activeConnection->name().compare("CONNECTION_TCP")) {
-            LOG_INFO("Network based connection, detection timeouts set to 1 second");
-            OSTimeoutMicroSeconds = 0;
-            OSTimeoutSeconds = 1;
-            PortFD = tcpConnection->getPortFD();
-        }
-        else {
-            LOG_INFO("Non-Network based connection, detection timeouts set to 0.1 seconds");
-            OSTimeoutMicroSeconds = 100000;
-            OSTimeoutSeconds = 0;
-            PortFD = serialConnection->getPortFD();
-        }
-
-        char handshake_response[RB_MAX_LEN] = {0};
-        handshake_status = getCommandSingleCharErrorOrLongResponse(PortFD, handshake_response,
-                                                                                      OS_handshake);
-        if (strcmp(handshake_response, "On-Step") == 0)
-        {
-            LOG_DEBUG("OnStep Aux handshake established");
-            handshake_status = true;
-            GetCapabilites();
+    Connection::Interface *activeConnection = getActiveConnection();
+    if (!activeConnection->name().compare("CONNECTION_TCP")) {
+        LOG_INFO("Network based connection, detection timeouts set to 1 second");
+        OSTimeoutMicroSeconds = 0;
+        OSTimeoutSeconds = 1;
+        PortFD = tcpConnection->getPortFD();
+    } else {
+        LOG_INFO("Non-Network based connection, detection timeouts set to 0.1 seconds");
+        OSTimeoutMicroSeconds = 100000;
+        OSTimeoutSeconds = 0;
+        PortFD = serialConnection->getPortFD();
+    }
+    char handshake_response[RB_MAX_LEN] = {0};
+    handshake_status = getCommandSingleCharErrorOrLongResponse(PortFD, handshake_response,
+                                                                                  OS_handshake);
+    if (strcmp(handshake_response, "On-Step") == 0) {
+        LOG_DEBUG("OnStep Aux handshake established");
+        handshake_status = true;
+        GetCapabilites();
  //           SlowTimer.start(60000);
-        }
-        else {
-            LOGF_DEBUG("OnStep Aux handshake error, reponse was: %s", handshake_response);
-        }
-//    }
-//    else {
-//        LOG_ERROR("OnStep Aux can't handshake, device not connected");
-//    }
+    } else {
+        LOGF_DEBUG("OnStep Aux handshake error, reponse was: %s", handshake_response);
+    }
 
     return handshake_status;
 }
@@ -1170,20 +1152,20 @@ bool OnStep_Aux::SetRotatorBacklashEnabled(bool enabled)
 /***********************************************************
 ** Client is asking us to establish connection to the device
 ************************************************************/
-bool OnStep_Aux::Connect()
-{
-    bool status = INDI::DefaultDevice::Connect();
-    return status;
-}
+//bool OnStep_Aux::Connect()
+//{
+//    bool status = INDI::DefaultDevice::Connect();
+//    return status;
+//}
 
 /***********************************************************
 ** Client is asking us to terminate connection to the device
 ************************************************************/
-bool OnStep_Aux::Disconnect()
-{
-    bool status = INDI::DefaultDevice::Disconnect();
-    return status;
-}
+//bool OnStep_Aux::Disconnect()
+//{
+//    bool status = INDI::DefaultDevice::Disconnect();
+//    return status;
+//}
 
 //*******************
 // Required overrides
