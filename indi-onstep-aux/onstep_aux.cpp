@@ -246,15 +246,15 @@ void OnStep_Aux::GetCapabilites()
  **********************************************/
 bool OnStep_Aux::initProperties()
 {
-    DefaultDevice::initProperties();
+    INDI::DefaultDevice::initProperties();
+    addAuxControls();
+    setDefaultPollingPeriod(10000);
     setDriverInterface(FOCUSER_INTERFACE | WEATHER_INTERFACE | ROTATOR_INTERFACE );
     FI::initProperties(FOCUS_TAB);
     WI::initProperties(WEATHER_TAB, WEATHER_TAB);
     RI::initProperties(ROTATOR_TAB);
-    addDebugControl();
-    addConfigurationControl();
+    addAuxControls();
     setDefaultPollingPeriod(10000);
-    addPollPeriodControl();
 
     //FocuserInterface
     //Initial, these will be updated later.
@@ -1152,20 +1152,20 @@ bool OnStep_Aux::SetRotatorBacklashEnabled(bool enabled)
 /***********************************************************
 ** Client is asking us to establish connection to the device
 ************************************************************/
-//bool OnStep_Aux::Connect()
-//{
-//    bool status = INDI::DefaultDevice::Connect();
-//    return status;
-//}
+bool OnStep_Aux::Connect()
+{
+    bool status = INDI::DefaultDevice::Connect();
+    return status;
+}
 
 /***********************************************************
 ** Client is asking us to terminate connection to the device
 ************************************************************/
-//bool OnStep_Aux::Disconnect()
-//{
-//    bool status = INDI::DefaultDevice::Disconnect();
-//    return status;
-//}
+bool OnStep_Aux::Disconnect()
+{
+    bool status = INDI::DefaultDevice::Disconnect();
+    return status;
+}
 
 //*******************
 // Required overrides

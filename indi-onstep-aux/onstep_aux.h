@@ -206,8 +206,8 @@ class OnStep_Aux : public INDI::DefaultDevice, public INDI::FocuserInterface, pu
 
   protected:
     virtual const char *getDefaultName() override;
-//    bool Connect() override;
-//    bool Disconnect() override;
+    virtual bool Connect() override;
+    virtual bool Disconnect() override;
     virtual bool saveConfigItems(FILE *fp) override;
 //    virtual void Init_Outputs();
 
