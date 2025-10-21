@@ -211,9 +211,9 @@ class OnStep_Aux : public INDI::DefaultDevice, public INDI::FocuserInterface, pu
     virtual bool saveConfigItems(FILE *fp) override;
 //    virtual void Init_Outputs();
 
-    virtual void TimerHit() override;
+//    virtual void TimerHit() override;
     // Timer for slow updates, once per minute
-    INDI::Timer SlowTimer;
+//    INDI::Timer SlowTimer;
 
     //Command processing
     bool sendOSCommand(const char *cmd);

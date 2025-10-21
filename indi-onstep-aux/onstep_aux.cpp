@@ -222,9 +222,9 @@ void OnStep_Aux::GetCapabilites()
     }
 
     // Start polling timer (e.g., every 1000ms)
-    SetTimer(getCurrentPollingPeriod());
+//    SetTimer(getCurrentPollingPeriod());
     // Start the slow timer for weather updates
-    SlowTimer.start(60000);
+//    SlowTimer.start(60000);
     // Call the slow property update once as this is startup and we want to populate now
 //    SlowTimerHit();
 }
