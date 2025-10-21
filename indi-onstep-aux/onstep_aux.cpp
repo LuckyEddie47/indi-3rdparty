@@ -74,6 +74,22 @@ const char *OnStep_Aux::getDefaultName()
  *****************************************************************/
 bool OnStep_Aux::Handshake()
 {
+    // Set PortFD from the active connection for use in handshake
+    Connection::Interface *activeConnection = getActiveConnection();
+    if (activeConnection) {
+        if (activeConnection->name() == serialConnection->name()) {
+            PortFD = serialConnection->getPortFD();
+        } else if (activeConnection->name() == tcpConnection->name()) {
+            PortFD = tcpConnection->getPortFD();
+        } else {
+            LOG_ERROR("Unknown connection type");
+            return false;
+        }
+    } else {
+        LOG_DEBUG("No active connection");
+        return false;
+    }
+
     bool handshake_status = false;
     char handshake_response[RB_MAX_LEN] = {0};
     handshake_status = getCommandSingleCharErrorOrLongResponse(PortFD, handshake_response,
@@ -1164,12 +1180,12 @@ bool OnStep_Aux::Connect()
     // The connection handshake is called automatically by the framework
     // We just need to get the port FD from the active connection
     if (activeConnection->name() == serialConnection->name()) {
-        PortFD = serialConnection->getPortFD();
+        //PortFD = serialConnection->getPortFD();
         LOG_INFO("Non-Network based connection, detection timeouts set to 0.1 seconds");
         OSTimeoutMicroSeconds = 100000;
         OSTimeoutSeconds = 0;
     } else if (activeConnection->name() == tcpConnection->name()) {
-        PortFD = tcpConnection->getPortFD();
+        //PortFD = tcpConnection->getPortFD();
         LOG_INFO("Network based connection, detection timeouts set to 1 second");
         OSTimeoutMicroSeconds = 0;
         OSTimeoutSeconds = 1;
