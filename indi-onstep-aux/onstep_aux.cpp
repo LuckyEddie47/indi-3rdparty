@@ -75,22 +75,22 @@ const char *OnStep_Aux::getDefaultName()
 bool OnStep_Aux::Handshake()
 {
     // Set PortFD from the active connection for use in handshake
-//    Connection::Interface *activeConnection = getActiveConnection();
-//    if (activeConnection) {
-//        if (activeConnection->name() == serialConnection->name()) {
-//            PortFD = serialConnection->getPortFD();
-//        } else if (activeConnection->name() == tcpConnection->name()) {
-//            PortFD = tcpConnection->getPortFD();
-//        } else {
-//            LOG_ERROR("Unknown connection type");
-//            return false;
-//        }
-//    } else {
-//        LOG_DEBUG("No active connection");
-//        return false;
-//    }
-//
-//    LOGF_DEBUG("Handshake: PortFD = %d", PortFD);
+    Connection::Interface *activeConnection = getActiveConnection();
+    if (activeConnection) {
+        if (activeConnection->name() == serialConnection->name()) {
+            PortFD = serialConnection->getPortFD();
+        } else if (activeConnection->name() == tcpConnection->name()) {
+            PortFD = tcpConnection->getPortFD();
+        } else {
+            LOG_ERROR("Unknown connection type");
+            return false;
+        }
+    } else {
+        LOG_DEBUG("No active connection");
+        return false;
+    }
+
+    LOGF_DEBUG("Handshake: PortFD = %d", PortFD);
 
     bool handshake_status = false;
     char handshake_response[RB_MAX_LEN] = {0};
