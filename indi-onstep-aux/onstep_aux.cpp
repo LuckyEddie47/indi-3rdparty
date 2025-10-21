@@ -90,6 +90,8 @@ bool OnStep_Aux::Handshake()
         return false;
     }
 
+    LOGF_DEBUG("Handshake: PortFD = %d", PortFD);
+
     bool handshake_status = false;
     char handshake_response[RB_MAX_LEN] = {0};
     handshake_status = getCommandSingleCharErrorOrLongResponse(PortFD, handshake_response,
