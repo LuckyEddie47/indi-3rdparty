@@ -90,19 +90,68 @@ bool OnStep_Aux::Handshake()
 //        return false;
 //    }
 
-    if (serialConnection && serialConnection->getPortFD() > 0) {
-        PortFD = serialConnection->getPortFD();
-        LOGF_INFO("Using serial connection, PortFD: %d", PortFD);
+//    if (serialConnection && serialConnection->getPortFD() > 0) {
+//        PortFD = serialConnection->getPortFD();
+//        LOGF_INFO("Using serial connection, PortFD: %d", PortFD);
+//    }
+//    else if (tcpConnection && tcpConnection->getPortFD() > 0) {
+//        PortFD = tcpConnection->getPortFD();
+//        LOGF_INFO("Using TCP connection, PortFD: %d", PortFD);
+//    }
+//
+//    if (PortFD < 0) {
+//        LOGF_ERROR("Failed to get valid file descriptor from connection, PortFD: %d", PortFD);
+//        return false;
+//    }
+
+    if (serialConnection)
+    {
+        int serialFD = serialConnection->getPortFD();
+        LOGF_DEBUG("Serial connection exists, FD = %d", serialFD);
+        if (serialFD > 0)
+        {
+            PortFD = serialFD;
+            LOG_DEBUG("Using serial connection");
+        }
     }
-    else if (tcpConnection && tcpConnection->getPortFD() > 0) {
-        PortFD = tcpConnection->getPortFD();
-        LOGF_INFO("Using TCP connection, PortFD: %d", PortFD);
+    else
+    {
+        LOG_DEBUG("Serial connection is NULL");
     }
 
-    if (PortFD < 0) {
-        LOGF_ERROR("Failed to get valid file descriptor from connection, PortFD: %d", PortFD);
+    if (tcpConnection)
+    {
+        int tcpFD = tcpConnection->getPortFD();
+        LOGF_DEBUG("TCP connection exists, FD = %d", tcpFD);
+        if (tcpFD > 0)
+        {
+            PortFD = tcpFD;
+            LOG_DEBUG("Using TCP connection");
+        }
+    }
+    else
+    {
+        LOG_DEBUG("TCP connection is NULL");
+    }
+
+    // Also check getActiveConnection()
+    Connection::Interface *activeConnection = getActiveConnection();
+    if (activeConnection)
+    {
+        LOGF_DEBUG("Active connection: %s", activeConnection->name().c_str());
+    }
+    else
+    {
+        LOG_DEBUG("getActiveConnection() returned NULL");
+    }
+
+    if (PortFD < 0)
+    {
+        LOGF_ERROR("Failed to get valid file descriptor from connection (PortFD = %d)", PortFD);
         return false;
     }
+
+    LOGF_INFO("Successfully got file descriptor: %d", PortFD);
 
     bool handshake_status = false;
     char handshake_response[RB_MAX_LEN] = {0};
