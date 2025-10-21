@@ -75,22 +75,34 @@ const char *OnStep_Aux::getDefaultName()
 bool OnStep_Aux::Handshake()
 {
     // Set PortFD from the active connection for use in handshake
-    Connection::Interface *activeConnection = getActiveConnection();
-    if (activeConnection) {
-        if (activeConnection->name() == serialConnection->name()) {
-            PortFD = serialConnection->getPortFD();
-        } else if (activeConnection->name() == tcpConnection->name()) {
-            PortFD = tcpConnection->getPortFD();
-        } else {
-            LOG_ERROR("Unknown connection type");
-            return false;
-        }
-    } else {
-        LOG_DEBUG("No active connection");
-        return false;
+//    Connection::Interface *activeConnection = getActiveConnection();
+//    if (activeConnection) {
+//        if (activeConnection->name() == serialConnection->name()) {
+//            PortFD = serialConnection->getPortFD();
+//        } else if (activeConnection->name() == tcpConnection->name()) {
+//            PortFD = tcpConnection->getPortFD();
+//        } else {
+//            LOG_ERROR("Unknown connection type");
+//            return false;
+//        }
+//    } else {
+//        LOG_DEBUG("No active connection");
+//        return false;
+//    }
+
+    if (serialConnection && serialConnection->getPortFD() > 0) {
+        PortFD = serialConnection->getPortFD();
+        LOGF_INFO("Using serial connection, PortFD: %d", PortFD);
+    }
+    else if (tcpConnection && tcpConnection->getPortFD() > 0) {
+        PortFD = tcpConnection->getPortFD();
+        LOGF_INFO("Using TCP connection, PortFD: %d", PortFD);
     }
 
-    LOGF_DEBUG("Handshake: PortFD = %d", PortFD);
+    if (PortFD < 0) {
+        LOGF_ERROR("Failed to get valid file descriptor from connection, PortFD: %d", PortFD);
+        return false;
+    }
 
     bool handshake_status = false;
     char handshake_response[RB_MAX_LEN] = {0};
@@ -256,11 +268,11 @@ bool OnStep_Aux::initProperties()
     INDI::DefaultDevice::initProperties();
 
     tcpConnection = new Connection::TCP(this);
-    tcpConnection->registerHandshake([&]() {return Handshake(); });
+//    tcpConnection->registerHandshake([&]() {return Handshake(); });
     registerConnection(tcpConnection);
 
     serialConnection = new Connection::Serial(this);
-    serialConnection->registerHandshake([&]() {return Handshake(); });
+//    serialConnection->registerHandshake([&]() {return Handshake(); });
     registerConnection(serialConnection);
 
     addAuxControls();
@@ -1172,38 +1184,43 @@ bool OnStep_Aux::SetRotatorBacklashEnabled(bool enabled)
 bool OnStep_Aux::Connect()
 {
     // Get the file descriptor from the active connection
-    Connection::Interface *activeConnection = getActiveConnection();
+//    Connection::Interface *activeConnection = getActiveConnection();
+//
+//    if (!activeConnection) {
+//        LOG_ERROR("No active connection");
+//        return false;
+//    }
+//
+//    // The connection handshake is called automatically by the framework
+//    // We just need to get the port FD from the active connection
+//    if (activeConnection->name() == serialConnection->name()) {
+//        PortFD = serialConnection->getPortFD();
+//        LOG_INFO("Non-Network based connection, detection timeouts set to 0.1 seconds");
+//        OSTimeoutMicroSeconds = 100000;
+//        OSTimeoutSeconds = 0;
+//    } else if (activeConnection->name() == tcpConnection->name()) {
+//        PortFD = tcpConnection->getPortFD();
+//        LOG_INFO("Network based connection, detection timeouts set to 1 second");
+//        OSTimeoutMicroSeconds = 0;
+//        OSTimeoutSeconds = 1;
+//    } else {
+//        LOG_ERROR("Unknown connection type");
+//        return false;
+//    }
+//
+//    LOGF_INFO("PortFD = %d", PortFD);
+//
+//    if (PortFD < 0) {
+//        LOG_ERROR("Failed to get valid file descriptor");
+//        return false;
+//    }
+//
+//    LOG_INFO("OnStep Aux connected successfully");
 
-    if (!activeConnection) {
-        LOG_ERROR("No active connection");
+    if (!Handshake()) {
+        LOG_ERROR("Failed to communicate with OnStep Aux");
         return false;
     }
-
-    // The connection handshake is called automatically by the framework
-    // We just need to get the port FD from the active connection
-    if (activeConnection->name() == serialConnection->name()) {
-        PortFD = serialConnection->getPortFD();
-        LOG_INFO("Non-Network based connection, detection timeouts set to 0.1 seconds");
-        OSTimeoutMicroSeconds = 100000;
-        OSTimeoutSeconds = 0;
-    } else if (activeConnection->name() == tcpConnection->name()) {
-        PortFD = tcpConnection->getPortFD();
-        LOG_INFO("Network based connection, detection timeouts set to 1 second");
-        OSTimeoutMicroSeconds = 0;
-        OSTimeoutSeconds = 1;
-    } else {
-        LOG_ERROR("Unknown connection type");
-        return false;
-    }
-
-    LOGF_INFO("PortFD = %d", PortFD);
-
-    if (PortFD < 0) {
-        LOG_ERROR("Failed to get valid file descriptor");
-        return false;
-    }
-
-    LOG_INFO("OnStep Aux connected successfully");
 
     // Start polling timer (e.g., every 1000ms)
     SetTimer(getCurrentPollingPeriod());
