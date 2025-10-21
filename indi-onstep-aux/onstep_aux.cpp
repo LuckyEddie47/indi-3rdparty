@@ -22,7 +22,7 @@
 #include "onstep_aux.h"
 #include "connectionplugins/connectiontcp.h"
 #include "connectionplugins/connectionserial.h"
-//#include "connectionplugins/connectioninterface.h"
+#include "connectionplugins/connectioninterface.h"
 #include "indicom.h"
 
 #include <cstring>
@@ -50,7 +50,7 @@ std::unique_ptr<OnStep_Aux> OnStepAux(new OnStep_Aux());
 // Mutex for communications
 std::mutex osaCommsLock;
 
-OnStep_Aux::OnStep_Aux() : FI(this),  RI(this), WI(this)
+OnStep_Aux::OnStep_Aux() : INDI::DefaultDevice(), FI(this),  RI(this), WI(this)
 {
 // Debug only
 // Halts the process at this point. Allows remote debugger to attach which is required
@@ -104,6 +104,17 @@ bool OnStep_Aux::Handshake()
 //        return false;
 //    }
 
+    // The connection plugins need to perform their handshake first
+    Connection::Interface *activeConnection = getActiveConnection();
+
+    if (!activeConnection)
+    {
+        LOG_ERROR("No active connection");
+        return false;
+    }
+
+    LOGF_DEBUG("Active connection: %s", activeConnection->name().c_str());
+
     if (serialConnection)
     {
         int serialFD = serialConnection->getPortFD();
@@ -134,16 +145,16 @@ bool OnStep_Aux::Handshake()
         LOG_INFO("TCP connection is NULL");
     }
 
-    // Also check getActiveConnection()
-    Connection::Interface *activeConnection = getActiveConnection();
-    if (activeConnection)
-    {
-        LOGF_INFO("Active connection: %s", activeConnection->name().c_str());
-    }
-    else
-    {
-        LOG_INFO("getActiveConnection() returned NULL");
-    }
+//    // Also check getActiveConnection()
+//    Connection::Interface *activeConnection = getActiveConnection();
+//    if (activeConnection)
+//    {
+//        LOGF_INFO("Active connection: %s", activeConnection->name().c_str());
+//    }
+//    else
+//    {
+//        LOG_INFO("getActiveConnection() returned NULL");
+//    }
 
     if (PortFD < 0)
     {
@@ -1265,6 +1276,11 @@ bool OnStep_Aux::Connect()
 //    }
 //
 //    LOG_INFO("OnStep Aux connected successfully");
+
+    if (!INDI::DefaultDevice::Connect()) {
+        LOG_ERROR("Parent Connect() failed");
+        return false;
+    }
 
     if (!Handshake()) {
         LOG_ERROR("Failed to communicate with OnStep Aux");
