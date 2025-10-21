@@ -107,42 +107,42 @@ bool OnStep_Aux::Handshake()
     if (serialConnection)
     {
         int serialFD = serialConnection->getPortFD();
-        LOGF_DEBUG("Serial connection exists, FD = %d", serialFD);
+        LOGF_INFO("Serial connection exists, FD = %d", serialFD);
         if (serialFD > 0)
         {
             PortFD = serialFD;
-            LOG_DEBUG("Using serial connection");
+            LOG_INFO("Using serial connection");
         }
     }
     else
     {
-        LOG_DEBUG("Serial connection is NULL");
+        LOG_INFO("Serial connection is NULL");
     }
 
     if (tcpConnection)
     {
         int tcpFD = tcpConnection->getPortFD();
-        LOGF_DEBUG("TCP connection exists, FD = %d", tcpFD);
+        LOGF_INFO("TCP connection exists, FD = %d", tcpFD);
         if (tcpFD > 0)
         {
             PortFD = tcpFD;
-            LOG_DEBUG("Using TCP connection");
+            LOG_INFO("Using TCP connection");
         }
     }
     else
     {
-        LOG_DEBUG("TCP connection is NULL");
+        LOG_INFO("TCP connection is NULL");
     }
 
     // Also check getActiveConnection()
     Connection::Interface *activeConnection = getActiveConnection();
     if (activeConnection)
     {
-        LOGF_DEBUG("Active connection: %s", activeConnection->name().c_str());
+        LOGF_INFO("Active connection: %s", activeConnection->name().c_str());
     }
     else
     {
-        LOG_DEBUG("getActiveConnection() returned NULL");
+        LOG_INFO("getActiveConnection() returned NULL");
     }
 
     if (PortFD < 0)
@@ -158,11 +158,11 @@ bool OnStep_Aux::Handshake()
     handshake_status = getCommandSingleCharErrorOrLongResponse(PortFD, handshake_response,
                                                                                   OS_handshake);
     if (strcmp(handshake_response, "On-Step") == 0) {
-        LOG_DEBUG("OnStep Aux handshake established");
+        LOG_INFO("OnStep Aux handshake established");
         handshake_status = true;
         GetCapabilites();
     } else {
-        LOGF_DEBUG("OnStep Aux handshake error, reponse was: %s", handshake_response);
+        LOGF_INFO("OnStep Aux handshake error, reponse was: %s", handshake_response);
     }
 
     return handshake_status;
