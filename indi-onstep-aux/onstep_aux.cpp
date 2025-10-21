@@ -1196,7 +1196,7 @@ bool OnStep_Aux::Connect()
         return false;
     }
 
-    LOGF_DEBUG("PortFD = %d", PortFD);
+    LOGF_INFO("PortFD = %d", PortFD);
 
     if (PortFD < 0) {
         LOG_ERROR("Failed to get valid file descriptor");
