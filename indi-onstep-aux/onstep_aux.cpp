@@ -22,7 +22,7 @@
 #include "onstep_aux.h"
 #include "connectionplugins/connectiontcp.h"
 #include "connectionplugins/connectionserial.h"
-#include "connectionplugins/connectioninterface.h"
+//#include "connectionplugins/connectioninterface.h"
 #include "indicom.h"
 
 #include <cstring>
@@ -69,32 +69,12 @@ const char *OnStep_Aux::getDefaultName()
     return "OnStep Aux";
 }
 
-/**********************************************************
- * Called from  BaseDevice to establish contact with device
- *********************************************************/
+/******************************************************************
+ * Called from connectionInterface to establish contact with device
+ *****************************************************************/
 bool OnStep_Aux::Handshake()
 {
     bool handshake_status = false;
-
-    if (getActiveConnection() == tcpConnection) {
-//    Connection::Interface *activeConnection = getActiveConnection();
-//    if (!activeConnection->name().compare("CONNECTION_TCP")) {
-        LOG_INFO("Network based connection, detection timeouts set to 1 second");
-        OSTimeoutMicroSeconds = 0;
-        OSTimeoutSeconds = 1;
-        PortFD = tcpConnection->getPortFD();
-        tcpConnection = new Connection::TCP(this);
-        registerConnection(tcpConnection);
-    } else if (getActiveConnection() == serialConnection) {
-        LOG_INFO("Non-Network based connection, detection timeouts set to 0.1 seconds");
-        OSTimeoutMicroSeconds = 100000;
-        OSTimeoutSeconds = 0;
-        PortFD = serialConnection->getPortFD();
-        serialConnection = new Connection::Serial(this);
-        registerConnection(serialConnection);
-    } else {
-        return false;
-    }
     char handshake_response[RB_MAX_LEN] = {0};
     handshake_status = getCommandSingleCharErrorOrLongResponse(PortFD, handshake_response,
                                                                                   OS_handshake);
@@ -102,7 +82,6 @@ bool OnStep_Aux::Handshake()
         LOG_DEBUG("OnStep Aux handshake established");
         handshake_status = true;
         GetCapabilites();
- //           SlowTimer.start(60000);
     } else {
         LOGF_DEBUG("OnStep Aux handshake error, reponse was: %s", handshake_response);
     }
@@ -242,9 +221,12 @@ void OnStep_Aux::GetCapabilites()
         LOG_DEBUG("Auxiliary Feature not found, disabling Features Tab");
     }
 
-
+    // Start polling timer (e.g., every 1000ms)
+    SetTimer(getCurrentPollingPeriod());
+    // Start the slow timer for weather updates
+    SlowTimer.start(60000);
     // Call the slow property update once as this is startup and we want to populate now
-    // SlowTimerHit();
+//    SlowTimerHit();
 }
 
 
@@ -254,12 +236,22 @@ void OnStep_Aux::GetCapabilites()
 bool OnStep_Aux::initProperties()
 {
     INDI::DefaultDevice::initProperties();
+
+    tcpConnection = new Connection::TCP(this);
+    tcpConnection->registerHandshake([&]() {return Handshake(); });
+    registerConnection(tcpConnection);
+
+    serialConnection = new Connection::Serial(this);
+    serialConnection->registerHandshake([&]() {return Handshake(); });
+    registerConnection(serialConnection);
+
     addAuxControls();
     setDefaultPollingPeriod(10000);
-    setDriverInterface(FOCUSER_INTERFACE | WEATHER_INTERFACE | ROTATOR_INTERFACE );
+    setDriverInterface(FOCUSER_INTERFACE | ROTATOR_INTERFACE | WEATHER_INTERFACE );
     FI::initProperties(FOCUS_TAB);
-    WI::initProperties(WEATHER_TAB, WEATHER_TAB);
     RI::initProperties(ROTATOR_TAB);
+    WI::initProperties(WEATHER_TAB, WEATHER_TAB);
+
     addAuxControls();
     setDefaultPollingPeriod(10000);
 
@@ -1161,8 +1153,42 @@ bool OnStep_Aux::SetRotatorBacklashEnabled(bool enabled)
 ************************************************************/
 bool OnStep_Aux::Connect()
 {
-    bool status = INDI::DefaultDevice::Connect();
-    return status;
+    // Get the file descriptor from the active connection
+    Connection::Interface *activeConnection = getActiveConnection();
+
+    if (!activeConnection) {
+        LOG_ERROR("No active connection");
+        return false;
+    }
+
+    // The connection handshake is called automatically by the framework
+    // We just need to get the port FD from the active connection
+    if (activeConnection->name() == serialConnection->name()) {
+        PortFD = serialConnection->getPortFD();
+        LOG_INFO("Non-Network based connection, detection timeouts set to 0.1 seconds");
+        OSTimeoutMicroSeconds = 100000;
+        OSTimeoutSeconds = 0;
+    } else if (activeConnection->name() == tcpConnection->name()) {
+        PortFD = tcpConnection->getPortFD();
+        LOG_INFO("Network based connection, detection timeouts set to 1 second");
+        OSTimeoutMicroSeconds = 0;
+        OSTimeoutSeconds = 1;
+    } else {
+        LOG_ERROR("Unknown connection type");
+        return false;
+    }
+
+    if (PortFD < 0) {
+        LOG_ERROR("Failed to get valid file descriptor");
+        return false;
+    }
+
+    LOG_INFO("OnStep Aux connected successfully");
+
+    // Start polling timer (e.g., every 1000ms)
+    SetTimer(getCurrentPollingPeriod());
+
+    return true;
 }
 
 /***********************************************************

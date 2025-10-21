@@ -194,7 +194,7 @@ class OnStep_Aux : public INDI::DefaultDevice, public INDI::FocuserInterface, pu
 {
   public:
     OnStep_Aux();
-    ~OnStep_Aux() {}
+    virtual ~OnStep_Aux() = default;
 
 
     virtual bool initProperties() override;
@@ -210,6 +210,10 @@ class OnStep_Aux : public INDI::DefaultDevice, public INDI::FocuserInterface, pu
     virtual bool Disconnect() override;
     virtual bool saveConfigItems(FILE *fp) override;
 //    virtual void Init_Outputs();
+
+    virtual void TimerHit() override;
+    // Timer for slow updates, once per minute
+    INDI::Timer SlowTimer;
 
     //Command processing
     bool sendOSCommand(const char *cmd);
@@ -380,8 +384,7 @@ class OnStep_Aux : public INDI::DefaultDevice, public INDI::FocuserInterface, pu
     }
 
 
-    // Timer for slow updates, once per minute
- //   INDI::Timer SlowTimer;
+
 
 
 
