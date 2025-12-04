@@ -1,0 +1,12 @@
+COMPILE INSTRUCTIONS:
+
+> cmake .
+> make
+> sudo make install
+
+
+TEST INSTRUCTIONS:
+(Tested with Indi 2.1.7)
+
+indiserver ./indi_onstep_aux
+
