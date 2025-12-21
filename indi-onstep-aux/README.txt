@@ -17,3 +17,5 @@ Auxiliary features:
 
 Version 0.1
     Initial test release
+Version 0.2
+    Fix for Focuser absolute move

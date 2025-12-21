@@ -19,7 +19,7 @@
 
     ===========================================
 
-    Version 1.0
+    Version 0.2
     Based on the lx200_onstep INDI driver with the telescope stripped out
 
 */

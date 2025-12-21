@@ -3,7 +3,7 @@
 <devGroup group="Auxiliary">
     <device label="OnStep Aux" manufacturer="OnStep">
         <driver name="OnStep Aux">indi_onstep_aux</driver>
-        <version>0.1</version>
+        <version>0.2</version>
     </device>
 </devGroup>
 </driversList>

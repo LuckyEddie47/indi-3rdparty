@@ -2111,13 +2111,8 @@ IPState OnStep_Aux::MoveAbsFocuser (uint32_t targetTicks)
         char cmd[32];
         char response[RB_MAX_LEN] = {0};
         snprintf(cmd, sizeof(cmd), "%s%06d%s", OS_move_focuser_abs_part, int(targetTicks), OS_command_terminator);
-        int error_or_fail = getCommandSingleCharResponse(PortFD, response, cmd);
-
-        if (error_or_fail > 1) {
-            return IPS_BUSY; // Normal case, should be set to normal by update.
-        } else {
-            return IPS_ALERT;
-        }
+        sendOSCommandBlind(cmd);
+        return IPS_BUSY; // Normal case, should be set to normal by update.
     } else {
         LOG_INFO("Unable to move focuser, out of range");
         return IPS_ALERT;
